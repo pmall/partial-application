@@ -1,0 +1,28 @@
+{
+    "name": "quanta/partial",
+    "type": "library",
+    "description": "Utility class for creating partial applications",
+    "license": "MIT",
+    "homepage": "https://github.com/quanta/partial",
+    "support": {
+        "issues": "https://github.com/quanta/partial/issues",
+        "source": "https://github.com/quanta/partial"
+    },
+    "authors": [
+        {
+            "name": "pmall",
+            "email": "pierre.mallinjoud@gmail.com"
+        }
+    ],
+    "require": {
+        "php": ">=5.0"
+    },
+    "require-dev": {
+        "kahlan/kahlan": "^4.0"
+    },
+    "autoload": {
+        "psr-4": {
+            "Quanta\\": "src"
+        }
+    }
+}
