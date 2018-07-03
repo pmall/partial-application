@@ -12,32 +12,32 @@ class Partial
     private $callable;
 
     /**
-     * The first argument.
+     * The predefined arguments.
      *
-     * @var mixed
+     * @var array
      */
-    private $argument;
+    private $arguments;
 
     /**
      * Constructor.
      *
      * @param callable  $callable
-     * @param mixed     $argument
+     * @param mixed     ...$arguments
      */
-    public function __construct(callable $callable, $argument)
+    public function __construct(callable $callable, ...$arguments)
     {
         $this->callable = $callable;
-        $this->argument = $argument;
+        $this->arguments = $arguments;
     }
 
     /**
-     * Call the callable with the argument and the given arguments.
+     * Call the callable with the predefined arguments and the given arguments.
      *
      * @param mixed ...$args
      * @return mixed
      */
      public function __invoke(...$arguments)
      {
-         return ($this->callable)($this->argument, ...$arguments);
+         return ($this->callable)(...$this->arguments, ...$arguments);
      }
 }
