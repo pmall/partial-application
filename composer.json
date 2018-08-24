@@ -1,12 +1,16 @@
 {
-    "name": "quanta/partial",
+    "name": "quanta/partial-application",
     "type": "library",
-    "description": "Utility class for creating partial applications",
+    "description": "Partial application library for php callables",
+    "keywords": [
+        "callable",
+        "partial-application"
+    ],
     "license": "MIT",
-    "homepage": "https://github.com/quanta/partial",
+    "homepage": "https://github.com/quanta/partial-application",
     "support": {
-        "issues": "https://github.com/quanta/partial/issues",
-        "source": "https://github.com/quanta/partial"
+        "issues": "https://github.com/quanta/partial-application/issues",
+        "source": "https://github.com/quanta/partial-application"
     },
     "authors": [
         {
@@ -15,7 +19,8 @@
         }
     ],
     "require": {
-        "php": ">=5.0"
+        "php": ">=5.0",
+        "quanta/printable": "^0.4.0"
     },
     "require-dev": {
         "kahlan/kahlan": "^4.0"

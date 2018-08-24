@@ -1,6 +1,6 @@
-# Partial
+# Partial application
 
-Utility class for creating partial applications.
+Partial application library for php callables.
 
 **Require** php >= 7.0
 
