@@ -23,7 +23,8 @@
         "quanta/printable": "^0.4.0"
     },
     "require-dev": {
-        "kahlan/kahlan": "^4.0"
+        "kahlan/kahlan": "^4.0",
+        "eloquent/phony-kahlan": "^2.0"
     },
     "autoload": {
         "psr-4": {

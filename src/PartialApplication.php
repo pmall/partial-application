@@ -36,7 +36,7 @@ final class PartialApplication
     {
         $this->callable = $callable;
         $this->unbound = array_values($unbound);
-        $this->bound = array_values($bound);
+        $this->bound = $bound;
     }
 
     /**
@@ -57,7 +57,7 @@ final class PartialApplication
                 $unbound = array_slice($this->unbound, 1);
                 $bound = array_merge($this->bound, [$x]);
 
-                $partial = new Partialapplication($this->callable, $unbound, $bound);
+                $partial = new PartialApplication($this->callable, $unbound, $bound);
 
                 return $partial(...$xs);
             }
@@ -65,6 +65,6 @@ final class PartialApplication
             throw new PartialApplicationException($this->callable, count($this->bound));
         }
 
-        return ($this->callable)(...$this->bound);
+        return ($this->callable)(...$this->bound, ...$xs);
     }
 }
