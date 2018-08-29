@@ -14,6 +14,25 @@ describe('PartialApplication', function () {
 
     });
 
+    describe('->placeholders()', function () {
+
+        it('should return an array of placeholder positions', function () {
+
+            $partial = new PartialApplication($this->callable, [
+                'v1',
+                Placeholder::class,
+                'v3',
+                Placeholder::class,
+            ]);
+
+            $test = $partial->placeholders();
+
+            expect($test)->toEqual([1, 3]);
+
+        });
+
+    });
+
     describe('->__invoke()', function () {
 
         context('when the partial application do not have placeholder', function () {
@@ -32,7 +51,7 @@ describe('PartialApplication', function () {
 
         });
 
-        context('when the partial application have at leas one placeholder', function () {
+        context('when the partial application have at least one placeholder', function () {
 
             beforeEach(function () {
 

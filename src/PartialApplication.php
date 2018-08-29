@@ -40,6 +40,18 @@ final class PartialApplication
     }
 
     /**
+     * Return an array of placeholder positions.
+     *
+     * @return array[int]
+     */
+    public function placeholders(): array
+    {
+        $placeholders = array_filter($this->unbound, [$this, 'isPlaceholder']);
+
+        return array_keys($placeholders);
+    }
+
+    /**
      * Return the value produced by the callable using the partially applied
      * arguments completed with the given ones.
      *
@@ -49,7 +61,7 @@ final class PartialApplication
     public function __invoke(...$xs)
     {
         if (count($this->unbound) > 0) {
-            $is_placeholder = $this->unbound[0] == Placeholder::class;
+            $is_placeholder = $this->isPlaceholder($this->unbound[0]);
 
             if (! $is_placeholder || count($xs) > 0) {
                 $x = $is_placeholder ? array_shift($xs) : $this->unbound[0];
@@ -66,5 +78,16 @@ final class PartialApplication
         }
 
         return ($this->callable)(...$this->bound, ...$xs);
+    }
+
+    /**
+     * Return whether the given argument is a placeholder.
+     *
+     * @param mixed
+     * @return bool
+     */
+    private function isPlaceholder($argument): bool
+    {
+        return $argument == Placeholder::class;
     }
 }
