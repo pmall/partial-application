@@ -2,6 +2,8 @@
 
 namespace Quanta;
 
+use ArgumentCountError;
+
 final class PartialApplication
 {
     /**
@@ -12,82 +14,80 @@ final class PartialApplication
     private $callable;
 
     /**
-     * The list of arguments which may contain placeholders.
+     * The list of arguments bound to the callable.
      *
      * @var array
      */
-    private $unbound;
-
-    /**
-     * The list of arguments bound to the callable parameters.
-     *
-     * @var array
-     */
-    private $bound;
+    private $xs;
 
     /**
      * Constructor.
      *
      * @param callable  $callable
-     * @param array     $unbound
-     * @param array     $bound
+     * @param mixed     ...$xs
      */
-    public function __construct(callable $callable, array $unbound = [], array $bound = [])
+    public function __construct(callable $callable, ...$xs)
     {
         $this->callable = $callable;
-        $this->unbound = array_values($unbound);
-        $this->bound = $bound;
+        $this->xs = $xs;
     }
 
     /**
-     * Return an array of placeholder positions.
-     *
-     * @return array[int]
-     */
-    public function placeholders(): array
-    {
-        $placeholders = array_filter($this->unbound, [$this, 'isPlaceholder']);
-
-        return array_keys($placeholders);
-    }
-
-    /**
-     * Return the value produced by the callable using the partially applied
-     * arguments completed with the given ones.
+     * Return the value produced by the callable with the given arguments
+     * completed with the bound arguments.
      *
      * @param mixed ...$xs
      * @return mixed
      */
     public function __invoke(...$xs)
     {
-        if (count($this->unbound) > 0) {
-            $is_placeholder = $this->isPlaceholder($this->unbound[0]);
+        $required = count(array_filter($this->xs, [$this, 'isPlaceholder']));
 
-            if (! $is_placeholder || count($xs) > 0) {
-                $x = $is_placeholder ? array_shift($xs) : $this->unbound[0];
-
-                $unbound = array_slice($this->unbound, 1);
-                $bound = array_merge($this->bound, [$x]);
-
-                $partial = new PartialApplication($this->callable, $unbound, $bound);
-
-                return $partial(...$xs);
-            }
-
-            throw new PartialApplicationException($this->callable, count($this->bound));
+        if (count($xs) >= $required) {
+            return $this->bound($this->callable, $this->xs)(...$xs);
         }
 
-        return ($this->callable)(...$this->bound, ...$xs);
+        $bt = debug_backtrace(DEBUG_BACKTRACE_IGNORE_ARGS, 1);
+
+        $tpl = 'Too few arguments to partial application of %s, %s passed in %s on line %s and exactly %s expected';
+
+        throw new ArgumentCountError(vsprintf($tpl, [
+            new Printable($this->callable, true),
+            count($xs),
+            $bt[0]['file'],
+            $bt[0]['line'],
+            $required,
+        ]));
     }
 
     /**
      * Return whether the given argument is a placeholder.
      *
-     * @param mixed
+     * @param mixed $x
      * @return bool
      */
-    private function isPlaceholder($argument): bool
+    private function isPlaceholder($x): bool
     {
-        return $argument == Placeholder::class;
+        return $x === Placeholder::class;
+    }
+
+    /**
+     * Bind the given arguments to the given callable.
+     *
+     * @param callable  $callable
+     * @param array     $xs
+     * @param int       $p
+     * @param int       $o
+     * @return callable
+     */
+    private function bound(callable $callable, array $xs, int $p = 0, int $o = 0): callable
+    {
+        if ($p < count($xs)) {
+            return $xs[$p] === Placeholder::class
+                ? $this->bound($callable, $xs, ++$p, ++$o)
+                : $this->bound(new BoundCallable($callable, $xs[$p], $o), $xs, ++$p, $o);
+        }
+
+        return $callable;
     }
 }

@@ -2,21 +2,15 @@
 
 use function Eloquent\Phony\Kahlan\stub;
 
-use Quanta\Placeholder;
-use Quanta\PartialApplication;
+use Quanta\BoundCallable;
 
-describe('PartialApplication', function () {
+describe('BoundCallable', function () {
 
     beforeEach(function () {
 
         $this->callable = stub();
 
-        $this->partial = new PartialApplication($this->callable, ...[
-            'a1',
-            Placeholder::class,
-            Placeholder::class,
-            'a4',
-        ]);
+        $this->partial = new BoundCallable($this->callable, 'a3', 2);
 
     });
 
@@ -26,17 +20,17 @@ describe('PartialApplication', function () {
 
             it('should call the callable once', function () {
 
-                ($this->partial)('a2', 'a3');
+                ($this->partial)('a1', 'a2');
 
                 $this->callable->once()->called();
 
             });
 
-            it('should call the callable with the given arguments completed with the bound arguments', function () {
+            it('should call the callable with the given arguments completed with the bound argument', function () {
 
-                ($this->partial)('a2', 'a3', 'a5');
+                ($this->partial)('a1', 'a2', 'a4');
 
-                $this->callable->calledWith('a1', 'a2', 'a3', 'a4', 'a5');
+                $this->callable->calledWith('a1', 'a2', 'a3', 'a4');
 
             });
 
@@ -44,7 +38,7 @@ describe('PartialApplication', function () {
 
                 $this->callable->returns('value');
 
-                $test = ($this->partial)('a2', 'a3');
+                $test = ($this->partial)('a1', 'a2');
 
                 expect($test)->toEqual('value');
 
@@ -52,11 +46,11 @@ describe('PartialApplication', function () {
 
         });
 
-        context('when less arguments than placeholders are given', function () {
+        context('when not enough arguments are given', function () {
 
             it('should throw an ArgumentCountError', function () {
 
-                $test = function () { ($this->partial)('v2'); };
+                $test = function () { ($this->partial)('a1'); };
 
                 expect($test)->toThrow(new ArgumentCountError);
 
