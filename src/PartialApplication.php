@@ -44,7 +44,7 @@ final class PartialApplication
         $required = count(array_filter($this->xs, [$this, 'isPlaceholder']));
 
         if (count($xs) >= $required) {
-            return $this->bound($this->callable, $this->xs)(...$xs);
+            return $this->bound($this->callable)(...$xs);
         }
 
         $bt = debug_backtrace(DEBUG_BACKTRACE_IGNORE_ARGS, 1);
@@ -80,12 +80,12 @@ final class PartialApplication
      * @param int       $o
      * @return callable
      */
-    private function bound(callable $callable, array $xs, int $p = 0, int $o = 0): callable
+    private function bound(callable $callable, int $p = 0, int $o = 0): callable
     {
-        if ($p < count($xs)) {
-            return $xs[$p] === Placeholder::class
-                ? $this->bound($callable, $xs, ++$p, ++$o)
-                : $this->bound(new BoundCallable($callable, $xs[$p], $o), $xs, ++$p, $o);
+        if ($p < count($this->xs)) {
+            return $this->xs[$p] === Placeholder::class
+                ? $this->bound($callable, ++$p, ++$o)
+                : $this->bound(new BoundCallable($callable, $this->xs[$p], $o), ++$p, $o);
         }
 
         return $callable;
