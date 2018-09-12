@@ -33,8 +33,8 @@ final class PartialApplication
     }
 
     /**
-     * Return the value produced by the callable with the given arguments
-     * completed with the bound arguments.
+     * Return the value produced by the callable with the bound arguments
+     * completed with the given arguments.
      *
      * @param mixed ...$xs
      * @return mixed
@@ -61,7 +61,7 @@ final class PartialApplication
     }
 
     /**
-     * Return whether the given argument is a placeholder.
+     * Return whether the given value is a placeholder.
      *
      * @param mixed $x
      * @return bool
@@ -72,20 +72,19 @@ final class PartialApplication
     }
 
     /**
-     * Bind the given arguments to the given callable.
+     * Bind the argument at the given position to the given callable.
      *
      * @param callable  $callable
-     * @param array     $xs
-     * @param int       $p
+     * @param int       $i
      * @param int       $o
      * @return callable
      */
-    private function bound(callable $callable, int $p = 0, int $o = 0): callable
+    private function bound(callable $callable, int $i = 0, int $o = 0): callable
     {
-        if ($p < count($this->xs)) {
-            return $this->xs[$p] === Placeholder::class
-                ? $this->bound($callable, ++$p, ++$o)
-                : $this->bound(new BoundCallable($callable, $this->xs[$p], $o), ++$p, $o);
+        if ($i < count($this->xs)) {
+            return $this->isPlaceholder($this->xs[$i])
+                ? $this->bound($callable, ++$i, ++$o)
+                : $this->bound(new BoundCallable($callable, $this->xs[$i], $o), ++$i, $o);
         }
 
         return $callable;

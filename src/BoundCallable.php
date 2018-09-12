@@ -14,31 +14,31 @@ final class BoundCallable
     private $callable;
 
     /**
-     * The the argument bound to the callable parameter.
+     * The the argument bound to the callable.
      *
      * @var mixed
      */
     private $x;
 
     /**
-     * The position of the callable parameter to bind to the argument.
+     * The number of placeholders before the argument.
      *
      * @var int
      */
-    private $position;
+    private $offset;
 
     /**
      * Constructor.
      *
      * @param callable  $callable
      * @param mixed     $x
-     * @param int       $position
+     * @param int       $offset
      */
-    public function __construct(callable $callable, $x, int $position = 0)
+    public function __construct(callable $callable, $x, int $offset = 0)
     {
         $this->callable = $callable;
         $this->x = $x;
-        $this->position = $position;
+        $this->offset = $offset;
     }
 
     /**
@@ -52,8 +52,8 @@ final class BoundCallable
     {
         $given = count($xs);
 
-        if ($given >= $this->position) {
-            array_splice($xs, $this->position, 0, [$this->x]);
+        if ($given >= $this->offset) {
+            array_splice($xs, $this->offset, 0, [$this->x]);
 
             return ($this->callable)(...$xs);
         }
@@ -67,7 +67,7 @@ final class BoundCallable
             $given,
             $bt[0]['file'],
             $bt[0]['line'],
-            $this->position,
+            $this->offset,
         ]));
     }
 }
