@@ -2,16 +2,21 @@
 
 use function Eloquent\Phony\Kahlan\stub;
 
-use Quanta\Undefined;
-use Quanta\BoundCallable;
+use Quanta\Placeholder;
+use Quanta\PartialInvokation;
 
-describe('BoundCallable', function () {
+describe('PartialInvokation', function () {
 
     beforeEach(function () {
 
         $this->callable = stub();
 
-        $this->partial = new BoundCallable($this->callable, 'v3', 2);
+        $this->partial = new PartialInvokation($this->callable, ...[
+            'v1',
+            Placeholder::class,
+            Placeholder::class,
+            'v4',
+        ]);
 
     });
 
@@ -27,11 +32,11 @@ describe('BoundCallable', function () {
 
             });
 
-            it('should call the callable with the bound argument completed with the given arguments', function () {
+            it('should call the callable with the bound arguments completed with the given arguments', function () {
 
-                ($this->partial)('v1', 'v2', 'v4');
+                ($this->partial)('v2', 'v3', 'v5');
 
-                $this->callable->calledWith('v1', 'v2', 'v3', 'v4');
+                $this->callable->calledWith('v1', 'v2', 'v3', 'v4', 'v5');
 
             });
 
@@ -49,11 +54,11 @@ describe('BoundCallable', function () {
 
         context('when not enough arguments are given', function () {
 
-            it('should replace the missing arguments with Quanta\Undefined::class', function () {
+            it('should throw an ArgumentCountError', function () {
 
-                ($this->partial)('v1');
+                $test = function () { ($this->partial)('v1'); };
 
-                $this->callable->calledWith('v1', Undefined::class, 'v3');
+                expect($test)->toThrow(new ArgumentCountError);
 
             });
 

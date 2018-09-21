@@ -42,32 +42,19 @@ final class BoundCallable
     }
 
     /**
-     * Return the value produced by the callable with the given arguments
-     * completed with the bound argument.
+     * Return the value produced by the callable.
      *
      * @param mixed ...$xs
      * @return mixed
      */
     public function __invoke(...$xs)
     {
-        $given = count($xs);
-
-        if ($given >= $this->offset) {
-            array_splice($xs, $this->offset, 0, [$this->x]);
-
-            return ($this->callable)(...$xs);
+        if (count($xs) < $this->offset) {
+            $xs = array_pad($xs, $this->offset, Undefined::class);
         }
 
-        $bt = debug_backtrace(DEBUG_BACKTRACE_IGNORE_ARGS, 1);
+        array_splice($xs, $this->offset, 0, [$this->x]);
 
-        $tpl = 'Too few arguments to partial application of %s, %s passed in %s on line %s and exactly %s expected';
-
-        throw new ArgumentCountError(vsprintf($tpl, [
-            new Printable($this->callable, true),
-            $given,
-            $bt[0]['file'],
-            $bt[0]['line'],
-            $this->offset,
-        ]));
+        return ($this->callable)(...$xs);
     }
 }
