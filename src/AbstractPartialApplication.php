@@ -34,22 +34,20 @@ abstract class AbstractPartialApplication implements PartialApplicationInterface
     }
 
     /**
-     * Return the given callable bound to the first argument of the given list.
+     * Return the given callable bound to the first argument of the given array
+     * of arguments.
      *
      * @param callable  $callable
      * @param array     $xs
-     * @param int       $i
-     * @param int       $o
+     * @param int       $p
      * @return callable
      */
-     private function bound(callable $callable, array $xs, int $i = 0, int $o = 0): callable
+     private function bound(callable $callable, array $xs, int $p = 0): callable
      {
          if (count($xs) > 0) {
              $x = array_shift($xs);
 
-             return $x === Placeholder::class
-                 ? $this->bound($callable, $xs, ++$i, ++$o)
-                 : $this->bound(new BoundCallable($callable, $x, $o), $xs, ++$i, $o);
+             return new BoundCallable($this->bound($callable, $xs, $p + 1), $x, $p);
          }
 
          return $callable;

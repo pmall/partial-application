@@ -3,6 +3,7 @@
 use function Eloquent\Phony\Kahlan\stub;
 
 use Quanta\Undefined;
+use Quanta\Placeholder;
 use Quanta\BoundCallable;
 
 describe('BoundCallable', function () {
@@ -11,49 +12,109 @@ describe('BoundCallable', function () {
 
         $this->callable = stub();
 
-        $this->partial = new BoundCallable($this->callable, 'v3', 2);
-
     });
 
     describe('->__invoke()', function () {
 
-        context('when enough arguments are given', function () {
+        context('when the bound argument is a placeholder', function () {
 
-            it('should call the callable once', function () {
+            beforeEach(function () {
 
-                ($this->partial)('v1', 'v2');
-
-                $this->callable->once()->called();
+                $this->bound = new BoundCallable($this->callable, Placeholder::class, 2);
 
             });
 
-            it('should call the callable with the bound argument completed with the given arguments', function () {
+            context('when enough arguments are given', function () {
 
-                ($this->partial)('v1', 'v2', 'v4');
+                it('should call the callable with the given arguments', function () {
 
-                $this->callable->calledWith('v1', 'v2', 'v3', 'v4');
+                    $this->callable->with('v1', 'v2', 'v3')->returns('value');
+
+                    $test = ($this->bound)('v1', 'v2', 'v3');
+
+                    expect($test)->toEqual('value');
+
+                });
 
             });
 
-            it('should return the value produced by the callable', function () {
+            context('when more than enough arguments are given', function () {
 
-                $this->callable->returns('value');
+                it('should call the callable with the given arguments', function () {
 
-                $test = ($this->partial)('v1', 'v2');
+                    $this->callable->with('v1', 'v2', 'v3', 'v4')->returns('value');
 
-                expect($test)->toEqual('value');
+                    $test = ($this->bound)('v1', 'v2', 'v3', 'v4');
+
+                    expect($test)->toEqual('value');
+
+                });
+
+            });
+
+            context('when not enough arguments are given', function () {
+
+                it('should call the callable with the given arguments completed with undefined values', function () {
+
+                    $this->callable->with('v1', Undefined::class, Undefined::class)->returns('value');
+
+                    $test = ($this->bound)('v1');
+
+                    expect($test)->toEqual('value');
+
+                });
 
             });
 
         });
 
-        context('when not enough arguments are given', function () {
+        context('when the bound argument is not a placeholder', function () {
 
-            it('should replace the missing arguments with Quanta\Undefined::class', function () {
+            beforeEach(function () {
 
-                ($this->partial)('v1');
+                $this->bound = new BoundCallable($this->callable, 'v3', 2);
 
-                $this->callable->calledWith('v1', Undefined::class, 'v3');
+            });
+
+            context('when enough arguments are given', function () {
+
+                it('should call the callable with the given arguments', function () {
+
+                    $this->callable->with('v1', 'v2', 'v3')->returns('value');
+
+                    $test = ($this->bound)('v1', 'v2');
+
+                    expect($test)->toEqual('value');
+
+                });
+
+            });
+
+            context('when more than enough arguments are given', function () {
+
+                it('should call the callable with the given arguments', function () {
+
+                    $this->callable->with('v1', 'v2', 'v3', 'v4')->returns('value');
+
+                    $test = ($this->bound)('v1', 'v2', 'v4');
+
+                    expect($test)->toEqual('value');
+
+                });
+
+            });
+
+            context('when not enough arguments are given', function () {
+
+                it('should call the callable with the given arguments completed with undefined values', function () {
+
+                    $this->callable->with('v1', Undefined::class, 'v3')->returns('value');
+
+                    $test = ($this->bound)('v1');
+
+                    expect($test)->toEqual('value');
+
+                });
 
             });
 

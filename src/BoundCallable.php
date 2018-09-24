@@ -21,24 +21,24 @@ final class BoundCallable
     private $x;
 
     /**
-     * The number of placeholders before the argument.
+     * The position of the bound argument.
      *
      * @var int
      */
-    private $offset;
+    private $position;
 
     /**
      * Constructor.
      *
      * @param callable  $callable
      * @param mixed     $x
-     * @param int       $offset
+     * @param int       $position
      */
-    public function __construct(callable $callable, $x, int $offset = 0)
+    public function __construct(callable $callable, $x, int $position)
     {
         $this->callable = $callable;
         $this->x = $x;
-        $this->offset = $offset;
+        $this->position = $position;
     }
 
     /**
@@ -49,11 +49,17 @@ final class BoundCallable
      */
     public function __invoke(...$xs)
     {
-        if (count($xs) < $this->offset) {
-            $xs = array_pad($xs, $this->offset, Undefined::class);
-        }
+        $is_placeholder = $this->x === Placeholder::class;
 
-        array_splice($xs, $this->offset, 0, [$this->x]);
+        $offset = $is_placeholder
+            ? $this->position + 1
+            : $this->position;
+
+        $xs = array_pad($xs, $offset, Undefined::class);
+
+        if (! $is_placeholder) {
+            array_splice($xs, $this->position, 0, [$this->x]);
+        }
 
         return ($this->callable)(...$xs);
     }
