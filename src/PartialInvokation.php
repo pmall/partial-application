@@ -6,6 +6,10 @@ final class PartialInvokation extends AbstractPartialApplication
 {
     public function __construct(callable $callable, ...$xs)
     {
-        parent::__construct(new CallableAdapter($callable), ...$xs);
+        $error = new InvokationError($callable);
+
+        $partial = new CallableAdapter($callable, $error);
+
+        parent::__construct($partial, ...$xs);
     }
 }

@@ -5,29 +5,29 @@ namespace Quanta;
 final class CallableAdapter implements PartialApplicationInterface
 {
     private $callable;
+    private $error;
 
-    public function __construct(callable $callable)
+    public function __construct(callable $callable, UndefinedArgumentErrorInterface $error)
     {
         $this->callable = $callable;
+        $this->error = $error;
     }
 
     public function __invoke(...$xs)
     {
-        $undefined = count(array_filter($xs, function ($x) {
-            return $x === Undefined::class;
-        }));
+        $undefined = array_filter($xs, [$this, 'isUndefined']);
 
-        if ($undefined == 0) {
+        if (count($undefined) == 0) {
             return ($this->callable)(...$xs);
         }
 
-        $tpl = $undefined == 1
-            ? 'unable to execute %s because %s argument is undefined'
-            : 'unable to execute %s because %s arguments are undefined';
+        $msg = $this->error->message($undefined);
 
-        throw new \ArgumentCountError(vsprintf($tpl, [
-            new Printable($this->callable, true),
-            $undefined,
-        ]));
+        throw new \ArgumentCountError($msg);
+    }
+
+    private function isUndefined($x): bool
+    {
+        return $x === Undefined::class;
     }
 }

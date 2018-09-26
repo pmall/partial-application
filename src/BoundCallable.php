@@ -51,9 +51,7 @@ final class BoundCallable
     {
         $is_placeholder = $this->x === Placeholder::class;
 
-        $offset = $is_placeholder
-            ? $this->position + 1
-            : $this->position;
+        $offset = $is_placeholder ? $this->position + 1 : $this->position;
 
         $xs = array_pad($xs, $offset, Undefined::class);
 

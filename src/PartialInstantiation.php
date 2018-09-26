@@ -6,6 +6,14 @@ final class PartialInstantiation extends AbstractPartialApplication
 {
     public function __construct(string $class, ...$xs)
     {
-        parent::__construct(new ClassAdapter($class), ...$xs);
+        $callable = function (...$xs) use ($class) {
+            return new $class(...$xs);
+        };
+
+        $error = new InstantiationError($class);
+
+        $partial = new CallableAdapter($callable, $error);
+
+        parent::__construct($partial, ...$xs);
     }
 }
