@@ -19,4 +19,4 @@ final class InstantiationError implements UndefinedArgumentErrorInterface
 
         return sprintf($tpl, $this->class, count($undefined));
     }
-};
+}

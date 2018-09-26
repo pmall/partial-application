@@ -22,4 +22,4 @@ final class InvokationError implements UndefinedArgumentErrorInterface
             count($undefined),
         ]);
     }
-};
+}
