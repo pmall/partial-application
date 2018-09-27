@@ -2,12 +2,10 @@
 
 namespace Quanta;
 
-use ArgumentCountError;
-
 final class BoundCallable
 {
     /**
-     * The callable to execute.
+     * The callable to invoke.
      *
      * @var callable
      */
@@ -42,22 +40,22 @@ final class BoundCallable
     }
 
     /**
-     * Return the value produced by the callable.
+     * Invoke the callable with the given arguments + this bound argument when
+     * it is not a placeholder.
+     *
+     * The callable expects this position + 1 arguments (positions are 0 based)
+     * so when fewer arguments are given the list is completed with undefined.
      *
      * @param mixed ...$xs
      * @return mixed
      */
     public function __invoke(...$xs)
     {
-        $is_placeholder = $this->x === Placeholder::class;
-
-        $offset = $is_placeholder ? $this->position + 1 : $this->position;
-
-        $xs = array_pad($xs, $offset, Undefined::class);
-
-        if (! $is_placeholder) {
+        if ($this->x !== Placeholder::class) {
             array_splice($xs, $this->position, 0, [$this->x]);
         }
+
+        $xs = array_pad($xs, $this->position + 1, Undefined::class);
 
         return ($this->callable)(...$xs);
     }

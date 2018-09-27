@@ -2,17 +2,33 @@
 
 namespace Quanta;
 
-final class CallableAdapter implements PartialApplicationInterface
+final class CallableAdapter
 {
+    /**
+     * The callable to invoke.
+     *
+     * @var callable
+     */
     private $callable;
-    private $error;
 
-    public function __construct(callable $callable, UndefinedArgumentErrorInterface $error)
+    /**
+     * Constructor.
+     *
+     * @param callable
+     */
+    public function __construct(callable $callable)
     {
         $this->callable = $callable;
-        $this->error = $error;
     }
 
+    /**
+     * Invoke the callable with the given arguments.
+     *
+     * An ArgumentCountError is thrown when some arguments are undefined.
+     *
+     * @param mixed ...$xs
+     * @return mixed
+     */
     public function __invoke(...$xs)
     {
         $undefined = array_filter($xs, [$this, 'isUndefined']);
@@ -21,11 +37,22 @@ final class CallableAdapter implements PartialApplicationInterface
             return ($this->callable)(...$xs);
         }
 
-        $msg = $this->error->message($undefined);
+        $tpl = count($undefined) == 1
+            ? 'Unable to invoke %s because %s argument is undefined'
+            : 'Unable to invoke %s because %s arguments are undefined';
 
-        throw new \ArgumentCountError($msg);
+        throw new \ArgumentCountError(vsprintf($tpl, [
+            new Printable($this->callable, true),
+            count($undefined),
+        ]));
     }
 
+    /**
+     * Return whether the given argument is undefined.
+     *
+     * @param mixed $x
+     * @return bool
+     */
     private function isUndefined($x): bool
     {
         return $x === Undefined::class;

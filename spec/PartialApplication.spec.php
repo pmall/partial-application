@@ -1,19 +1,17 @@
 <?php
 
-use function Eloquent\Phony\Kahlan\mock;
+use function Eloquent\Phony\Kahlan\stub;
 
-use Quanta\Undefined;
 use Quanta\Placeholder;
 use Quanta\PartialApplication;
-use Quanta\PartialApplicationInterface;
 
 describe('PartialApplication', function () {
 
     beforeEach(function () {
 
-        $this->callable = mock(PartialApplicationInterface::class);
+        $this->callable = stub();
 
-        $this->partial = new PartialApplication($this->callable->get(), ...[
+        $this->partial = new PartialApplication($this->callable, ...[
             'v1',
             Placeholder::class,
             Placeholder::class,
@@ -24,27 +22,11 @@ describe('PartialApplication', function () {
 
     describe('->__invoke()', function () {
 
-        context('when enough arguments are given', function () {
-
-            it('should call the callable once', function () {
-
-                ($this->partial)('v2', 'v3');
-
-                $this->callable->__invoke->once()->called();
-
-            });
+        context('when as many arguments as placeholders are given', function () {
 
             it('should call the callable with the bound arguments completed with the given arguments', function () {
 
-                ($this->partial)('v2', 'v3', 'v5');
-
-                $this->callable->__invoke->calledWith('v1', 'v2', 'v3', 'v4', 'v5');
-
-            });
-
-            it('should return the value produced by the callable', function () {
-
-                $this->callable->__invoke->returns('value');
+                $this->callable->with('v1', 'v2', 'v3', 'v4')->returns('value');
 
                 $test = ($this->partial)('v2', 'v3');
 
@@ -54,13 +36,27 @@ describe('PartialApplication', function () {
 
         });
 
+        context('when more arguments than placeholders are given', function () {
+
+            it('should call the callable with the bound arguments completed with the given arguments', function () {
+
+                $this->callable->with('v1', 'v2', 'v3', 'v4', 'v5')->returns('value');
+
+                $test = ($this->partial)('v2', 'v3', 'v5');
+
+                expect($test)->toEqual('value');
+
+            });
+
+        });
+
         context('when less arguments than placeholders are given', function () {
 
-            it('should replace the missing arguments with Quanta\Undefined::class', function () {
+            it('should throw an ArgumentCountError', function () {
 
-                $test = ($this->partial)('v2');
+                $test = function () { ($this->partial)('v2'); };
 
-                $this->callable->__invoke->calledWith('v1', 'v2', Undefined::class, 'v4');
+                expect($test)->toThrow(new ArgumentCountError);
 
             });
 
