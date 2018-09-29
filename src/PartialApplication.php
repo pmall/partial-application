@@ -5,9 +5,9 @@ namespace Quanta;
 final class PartialApplication
 {
     /**
-     * The bound callable.
+     * The bound callable to invoke.
      *
-     * @var callable
+     * @var \Quanta\BoundCallableInterface
      */
     private $callable;
 
@@ -15,44 +15,56 @@ final class PartialApplication
      * Constructor.
      *
      * Automatically wrap a CallableAdapter around the given callable and bind
-     * it with the given argument. This can't fail and it is transparent for the
-     * end user.
+     * it with the given arguments using BoundCallable.
+     *
+     * It is done in the container because this class is meant to be an helper
+     * to easily build the BoundCallable recursive structure.
+     *
+     * It is allowed because it is transparent for the end user and can't fail.
      *
      * @param callable  $callable
      * @param mixed     ...$xs
      */
     public function __construct(callable $callable, ...$xs)
     {
-        $this->callable = $this->bound(new CallableAdapter($callable), $xs);
+        $this->callable = array_reduce($xs, [$this, 'bound'], new CallableAdapter($callable));
     }
 
     /**
-     * Invoke the bound callable with the given argument.
+     * Invoke the bound callable with the given arguments.
      *
      * @param mixed ...$xs
      * @return mixed
      */
     public function __invoke(...$xs)
     {
-        return ($this->callable)(...$xs);
+        // fail when there is less given arguments than the number of expected
+        // arguments (=== total number of placeholders).
+        if (count($xs) >= $this->callable->expected()) {
+            return ($this->callable)(...$xs);
+        }
+
+        // simulate an ArgumentCountError.
+        $bt = debug_backtrace(DEBUG_BACKTRACE_IGNORE_ARGS, 1);
+
+        throw new \ArgumentCountError((string) new ArgumentCountErrorStr(...[
+            $this->callable->str(),
+            count($xs),
+            $this->callable->expected(),
+            $bt[0]['file'],
+            $bt[0]['line'],
+        ]));
     }
 
     /**
-     * Recursively bind the given callable to the given arguments.
+     * Return a BoundCallable from the given callable and the given argument.
      *
-     * @param callable  $callable
-     * @param array     $xs
-     * @param int       $p
-     * @return callable
+     * @param \Quanta\BoundCallableInterface    $callable
+     * @param mixed                             $x
+     * @return \Quanta\BoundCallableInterface
      */
-     private function bound(callable $callable, array $xs, int $p = 0): callable
+     private function bound(BoundCallableInterface $callable, $x): BoundCallableInterface
      {
-         if (count($xs) > 0) {
-             $x = array_shift($xs);
-
-             return new BoundCallable($this->bound($callable, $xs, $p + 1), $x, $p);
-         }
-
-         return $callable;
+         return new BoundCallable($callable, $x);
      }
 }

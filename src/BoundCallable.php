@@ -2,12 +2,12 @@
 
 namespace Quanta;
 
-final class BoundCallable
+final class BoundCallable implements BoundCallableInterface
 {
     /**
      * The callable to invoke.
      *
-     * @var callable
+     * @var \Quanta\BoundCallableInterface
      */
     private $callable;
 
@@ -19,44 +19,64 @@ final class BoundCallable
     private $x;
 
     /**
-     * The position of the bound argument.
-     *
-     * @var int
-     */
-    private $position;
-
-    /**
      * Constructor.
      *
-     * @param callable  $callable
-     * @param mixed     $x
-     * @param int       $position
+     * @param \Quanta\BoundCallableInterface    $callable
+     * @param mixed                             $x
      */
-    public function __construct(callable $callable, $x, int $position)
+    public function __construct(BoundCallableInterface $callable, $x)
     {
         $this->callable = $callable;
         $this->x = $x;
-        $this->position = $position;
     }
 
     /**
-     * Invoke the callable with the given arguments + this bound argument when
-     * it is not a placeholder.
-     *
-     * The callable expects this position + 1 arguments (positions are 0 based)
-     * so when fewer arguments are given the list is completed with undefined.
-     *
-     * @param mixed ...$xs
-     * @return mixed
+     * @inheritdoc
+     */
+    public function expected(): int
+    {
+        $expected = $this->callable->expected();
+
+        return $this->x === Placeholder::class ? $expected + 1 : $expected;
+    }
+
+    /**
+     * @inheritdoc
      */
     public function __invoke(...$xs)
     {
+        // number of expected arguments === number of remaining placeholders.
+        $expected = $this->expected();
+
+        // this argument position within the given arguments is the number of
+        // expected arguments.
         if ($this->x !== Placeholder::class) {
-            array_splice($xs, $this->position, 0, [$this->x]);
+            array_splice($xs, $expected, 0, [$this->x]);
         }
 
-        $xs = array_pad($xs, $this->position + 1, Undefined::class);
+        // fail when there is less arguments than the number of expected
+        // arguments.
+        if (count($xs) >= $expected) {
+            return ($this->callable)(...$xs);
+        }
 
-        return ($this->callable)(...$xs);
+        // simulate an ArgumentCountError.
+        $bt = debug_backtrace(DEBUG_BACKTRACE_IGNORE_ARGS, 1);
+
+        throw new \ArgumentCountError((string) new ArgumentCountErrorStr(...[
+            $this->str(),
+            count($xs),
+            $this->expected(),
+            $bt[0]['file'],
+            $bt[0]['line'],
+        ]));
+    }
+
+    /**
+     * @inheritdoc
+     */
+    public function str(): string
+    {
+        return $this->callable->str();
     }
 }

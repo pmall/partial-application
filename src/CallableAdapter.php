@@ -2,7 +2,7 @@
 
 namespace Quanta;
 
-final class CallableAdapter
+final class CallableAdapter implements BoundCallableInterface
 {
     /**
      * The callable to invoke.
@@ -22,39 +22,26 @@ final class CallableAdapter
     }
 
     /**
-     * Invoke the callable with the given arguments.
-     *
-     * An ArgumentCountError is thrown when some arguments are undefined.
-     *
-     * @param mixed ...$xs
-     * @return mixed
+     * @inheritdoc
      */
-    public function __invoke(...$xs)
+    public function expected(): int
     {
-        $undefined = array_filter($xs, [$this, 'isUndefined']);
-
-        if (count($undefined) == 0) {
-            return ($this->callable)(...$xs);
-        }
-
-        $tpl = count($undefined) == 1
-            ? 'Unable to invoke %s because %s argument is undefined'
-            : 'Unable to invoke %s because %s arguments are undefined';
-
-        throw new \ArgumentCountError(vsprintf($tpl, [
-            new Printable($this->callable, true),
-            count($undefined),
-        ]));
+        return 0;
     }
 
     /**
-     * Return whether the given argument is undefined.
-     *
-     * @param mixed $x
-     * @return bool
+     * @inheritdoc
      */
-    private function isUndefined($x): bool
+    public function __invoke(...$xs)
     {
-        return $x === Undefined::class;
+        return ($this->callable)(...$xs);
+    }
+
+    /**
+     * @inheritdoc
+     */
+    public function str(): string
+    {
+        return (string) new Printable($this->callable, true);
     }
 }
