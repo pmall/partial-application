@@ -2,12 +2,17 @@
 
 namespace Quanta;
 
+use Quanta\PartialApplication\BoundCallable;
+use Quanta\PartialApplication\CallableAdapter;
+use Quanta\PartialApplication\BoundCallableInterface;
+use Quanta\PartialApplication\ArgumentCountErrorStr;
+
 final class PartialApplication
 {
     /**
      * The bound callable to invoke.
      *
-     * @var \Quanta\BoundCallableInterface
+     * @var \Quanta\PartialApplication\BoundCallableInterface
      */
     private $callable;
 
@@ -59,9 +64,9 @@ final class PartialApplication
     /**
      * Return a BoundCallable from the given callable and the given argument.
      *
-     * @param \Quanta\BoundCallableInterface    $callable
-     * @param mixed                             $x
-     * @return \Quanta\BoundCallableInterface
+     * @param \Quanta\PartialApplication\BoundCallableInterface $callable
+     * @param mixed                                             $x
+     * @return \Quanta\PartialApplication\BoundCallableInterface
      */
      private function bound(BoundCallableInterface $callable, $x): BoundCallableInterface
      {

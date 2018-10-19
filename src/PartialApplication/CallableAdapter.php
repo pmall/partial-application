@@ -1,6 +1,8 @@
 <?php declare(strict_types=1);
 
-namespace Quanta;
+namespace Quanta\PartialApplication;
+
+use Quanta\Printable;
 
 final class CallableAdapter implements BoundCallableInterface
 {

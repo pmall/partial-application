@@ -1,13 +1,15 @@
 <?php declare(strict_types=1);
 
-namespace Quanta;
+namespace Quanta\PartialApplication;
+
+use Quanta\Placeholder;
 
 final class BoundCallable implements BoundCallableInterface
 {
     /**
      * The callable to invoke.
      *
-     * @var \Quanta\BoundCallableInterface
+     * @var \Quanta\PartialApplication\BoundCallableInterface
      */
     private $callable;
 
@@ -21,8 +23,8 @@ final class BoundCallable implements BoundCallableInterface
     /**
      * Constructor.
      *
-     * @param \Quanta\BoundCallableInterface    $callable
-     * @param mixed                             $x
+     * @param \Quanta\PartialApplication\BoundCallableInterface $callable
+     * @param mixed                                             $x
      */
     public function __construct(BoundCallableInterface $callable, $x)
     {
