@@ -48,7 +48,7 @@ final class PartialApplication
         $bt = debug_backtrace(DEBUG_BACKTRACE_IGNORE_ARGS, 1);
 
         throw new \ArgumentCountError((string) new ArgumentCountErrorStr(...[
-            $this->callable->str(),
+            (string) $this->callable,
             count($xs),
             $this->callable->expected(),
             $bt[0]['file'],

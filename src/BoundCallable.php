@@ -75,8 +75,8 @@ final class BoundCallable implements BoundCallableInterface
     /**
      * @inheritdoc
      */
-    public function str(): string
+    public function __toString()
     {
-        return $this->callable->str();
+        return (string) $this->callable;
     }
 }

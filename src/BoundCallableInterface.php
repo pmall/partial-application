@@ -25,5 +25,5 @@ interface BoundCallableInterface
      *
      * @return string
      */
-    public function str(): string;
+    public function __toString();
 }

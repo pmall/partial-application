@@ -40,7 +40,7 @@ final class CallableAdapter implements BoundCallableInterface
     /**
      * @inheritdoc
      */
-    public function str(): string
+    public function __toString()
     {
         return (string) new Printable($this->callable, true);
     }
