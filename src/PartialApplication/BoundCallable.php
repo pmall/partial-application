@@ -3,6 +3,7 @@
 namespace Quanta\PartialApplication;
 
 use Quanta\Placeholder;
+use Quanta\Exceptions\ArgumentCountErrorMessage;
 
 final class BoundCallable implements BoundCallableInterface
 {
@@ -62,23 +63,10 @@ final class BoundCallable implements BoundCallableInterface
             return ($this->callable)(...$xs);
         }
 
-        // simulate an ArgumentCountError.
-        $bt = debug_backtrace(DEBUG_BACKTRACE_IGNORE_ARGS, 1);
-
-        throw new \ArgumentCountError((string) new ArgumentCountErrorStr(...[
-            $this->str(),
-            count($xs),
-            $this->expected(),
-            $bt[0]['file'],
-            $bt[0]['line'],
-        ]));
-    }
-
-    /**
-     * @inheritdoc
-     */
-    public function __toString()
-    {
-        return (string) $this->callable;
+        throw new \ArgumentCountError(
+            (string) new ArgumentCountErrorMessage(
+                $this->expected(), count($xs)
+            )
+        );
     }
 }

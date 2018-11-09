@@ -5,7 +5,7 @@ namespace Quanta;
 use Quanta\PartialApplication\BoundCallable;
 use Quanta\PartialApplication\CallableAdapter;
 use Quanta\PartialApplication\BoundCallableInterface;
-use Quanta\PartialApplication\ArgumentCountErrorStr;
+use Quanta\Exceptions\ArgumentCountErrorMessage;
 
 final class PartialApplication
 {
@@ -40,6 +40,7 @@ final class PartialApplication
      *
      * @param mixed ...$xs
      * @return mixed
+     * @throws \ArgumentCountError
      */
     public function __invoke(...$xs)
     {
@@ -49,16 +50,11 @@ final class PartialApplication
             return ($this->callable)(...$xs);
         }
 
-        // simulate an ArgumentCountError.
-        $bt = debug_backtrace(DEBUG_BACKTRACE_IGNORE_ARGS, 1);
-
-        throw new \ArgumentCountError((string) new ArgumentCountErrorStr(...[
-            (string) $this->callable,
-            count($xs),
-            $this->callable->expected(),
-            $bt[0]['file'],
-            $bt[0]['line'],
-        ]));
+        throw new \ArgumentCountError(
+            (string) new ArgumentCountErrorMessage(
+                $this->callable->expected(), count($xs)
+            )
+        );
     }
 
     /**

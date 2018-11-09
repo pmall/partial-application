@@ -2,8 +2,6 @@
 
 namespace Quanta\PartialApplication;
 
-use Quanta\Printable;
-
 final class CallableAdapter implements BoundCallableInterface
 {
     /**
@@ -37,13 +35,5 @@ final class CallableAdapter implements BoundCallableInterface
     public function __invoke(...$xs)
     {
         return ($this->callable)(...$xs);
-    }
-
-    /**
-     * @inheritdoc
-     */
-    public function __toString()
-    {
-        return (string) new Printable($this->callable, true);
     }
 }

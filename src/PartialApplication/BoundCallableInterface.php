@@ -18,12 +18,4 @@ interface BoundCallableInterface
      * @return mixed
      */
     public function __invoke(...$xs);
-
-    /**
-     * Return a string representation of the callable to display in the
-     * exception messages.
-     *
-     * @return string
-     */
-    public function __toString();
 }
