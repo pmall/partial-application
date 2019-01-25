@@ -1,9 +1,8 @@
 {
     "name": "quanta/partial-application",
     "type": "library",
-    "description": "Partial application library for php callables",
+    "description": "Partial application library for php",
     "keywords": [
-        "callable",
         "partial-application"
     ],
     "license": "MIT",
@@ -18,13 +17,16 @@
             "email": "pierre.mallinjoud@gmail.com"
         }
     ],
+    "config": {
+        "sort-packages": true
+    },
     "require": {
-        "php": ">=7.0",
-        "quanta/exceptions": "^0.1.0"
+        "php": ">=7.0"
     },
     "require-dev": {
+        "eloquent/phony-kahlan": "^2.0",
         "kahlan/kahlan": "^4.0",
-        "eloquent/phony-kahlan": "^2.0"
+        "phpstan/phpstan": "^0.11.1"
     },
     "autoload": {
         "psr-4": {
