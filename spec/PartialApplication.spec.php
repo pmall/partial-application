@@ -1,34 +1,62 @@
 <?php
 
 use function Eloquent\Phony\Kahlan\mock;
-use function Eloquent\Phony\Kahlan\partialMock;
 
 use Quanta\Placeholder;
-use Quanta\AbstractPartialApplication;
-use Quanta\PartialApplicationInterface;
+use Quanta\PartialApplication;
 
+use Quanta\PA\Constructor;
+use Quanta\PA\CallableAdapter;
 use Quanta\PA\CallableInterface;
 
-describe('AbstractPartialApplication', function () {
+describe('PartialApplication::fromCallable()', function () {
+
+    it('should return a partial application from the given callable', function () {
+
+        $callable = function () {};
+
+        $test = PartialApplication::fromCallable($callable, 'a', 'b', 'c');
+
+        expect($test)->toEqual(
+            new PartialApplication(
+                new CallableAdapter($callable), 'a', 'b', 'c'
+            )
+        );
+
+    });
+
+});
+
+describe('PartialApplication::fromClass()', function () {
+
+    it('should return a partial application of the constructor of the given class', function () {
+
+        $test = PartialApplication::fromClass(SomeClass::class, 'a', 'b', 'c');
+
+        expect($test)->toEqual(
+            new PartialApplication(
+                new Constructor(SomeClass::class), 'a', 'b', 'c'
+            )
+        );
+
+    });
+
+
+});
+
+describe('PartialApplication', function () {
 
     beforeEach(function () {
 
         $this->callable = mock(CallableInterface::class);
 
-        $this->pa = partialMock(AbstractPartialApplication::class, [
-            $this->callable->get(),
+        $this->pa = new PartialApplication($this->callable->get(), ...[
             'bound1',
             Placeholder::class,
             Placeholder::class,
             'bound2',
             Placeholder::class,
-        ])->get();
-
-    });
-
-    it('should implement PartialApplicationInterface', function () {
-
-        expect($this->pa)->toBeAnInstanceOf(PartialApplicationInterface::class);
+        ]);
 
     });
 

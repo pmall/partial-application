@@ -2,11 +2,13 @@
 
 namespace Quanta;
 
+use Quanta\PA\Constructor;
 use Quanta\PA\BoundCallable;
+use Quanta\PA\CallableAdapter;
 use Quanta\PA\UnboundCallable;
 use Quanta\PA\CallableInterface;
 
-abstract class AbstractPartialApplication implements PartialApplicationInterface
+final class PartialApplication
 {
     /**
      * The callable to invoke.
@@ -21,6 +23,30 @@ abstract class AbstractPartialApplication implements PartialApplicationInterface
      * @var array $arguments
      */
     private $arguments;
+
+    /**
+     * Return a partial application of the given callable.
+     *
+     * @param callable  $callable
+     * @param mixed     ...$arguments
+     * @return \Quanta\PartialApplication
+     */
+    public static function fromCallable(callable $callable, ...$arguments): PartialApplication
+    {
+        return new PartialApplication(new CallableAdapter($callable), ...$arguments);
+    }
+
+    /**
+     * Return a partial application of the constructor of the given class.
+     *
+     * @param string    $class
+     * @param mixed     ...$arguments
+     * @return \Quanta\PartialApplication
+     */
+    public static function fromClass(string $class, ...$arguments): PartialApplication
+    {
+        return new PartialApplication(new Constructor($class), ...$arguments);
+    }
 
     /**
      * Constructor.
