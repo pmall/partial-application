@@ -67,12 +67,16 @@ final class PartialApplication
     {
         $bound = array_reduce($this->arguments, [$this, 'bound'], $this->callable);
 
-        if (count($xs) >= count($bound->required())) {
+        if (count($xs) >= count($bound->parameters())) {
             return $bound(...$xs);
         }
 
         throw new \ArgumentCountError(
-            $this->argumentCountErrorMessage($bound, ...$xs)
+            vsprintf('Too few arguments to partial application of function %s() %s passed and exactly %s expected', [
+                $bound->str(),
+                count($xs),
+                count($bound->parameters()),
+            ])
         );
     }
 
@@ -90,27 +94,5 @@ final class PartialApplication
         return $argument === Placeholder::class
             ? new UnboundCallable($callable, 'p')
             : new BoundCallable($callable, $argument);
-    }
-
-    /**
-     * Return the message of the exception thrown when the partial application
-     * is invoked with missing arguments.
-     *
-     * @param \Quanta\PA\CallableInterface  $callable
-     * @param mixed                         ...$xs
-     * @return string
-     */
-    private function argumentCountErrorMessage(CallableInterface $callable, ...$xs): string
-    {
-        $tpl = implode(' ', [
-            'Too few arguments to partial application of function %s(),',
-            '%s passed and exactly %s expected'
-        ]);
-
-        return vsprintf($tpl, [
-            $callable->str(),
-            count($xs),
-            count($callable->required()),
-        ]);
     }
 }

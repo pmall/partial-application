@@ -105,19 +105,20 @@ final class UnboundCallable implements CallableInterface
      */
     private function missingArgumentErrorMessage(...$xs): string
     {
-        $previous = $this->callable->parameters();
-        $placeholders = array_filter($xs, [$this, 'isPlaceholder']);
-        $unbound = array_intersect_key($previous, $placeholders);
+        $missing = array_intersect_key(
+            $this->callable->parameters(),
+            array_filter($xs, [$this, 'isPlaceholder'])
+        );
 
-        if (count($unbound) > 0) {
-            return vsprintf('No argument given for required parameters %s and $%s of function %s()', [
-                implode(', ', array_map([$this, 'prefixedParameterName'], $unbound)),
+        if (count($missing) > 0) {
+            return vsprintf('No argument bound to parameters %s and $%s of function %s()', [
+                implode(', ', array_map([$this, 'prefixedParameterName'], $missing)),
                 $this->parameter,
                 $this->callable->str(),
             ]);
         }
 
-        return vsprintf('No argument given for required parameter $%s of function %s()', [
+        return vsprintf('No argument bound to parameter $%s of function %s()', [
             $this->parameter,
             $this->callable->str(),
         ]);
