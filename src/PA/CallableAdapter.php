@@ -32,14 +32,6 @@ final class CallableAdapter implements CallableInterface
     /**
      * @inheritdoc
      */
-    public function required(): array
-    {
-        return [];
-    }
-
-    /**
-     * @inheritdoc
-     */
     public function __invoke(...$xs)
     {
         return ($this->callable)(...$xs);

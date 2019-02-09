@@ -31,18 +31,6 @@ describe('CallableAdapter', function () {
 
     });
 
-    describe('->required()', function () {
-
-        it('should return an empty array', function () {
-
-            $test = $this->callable->required();
-
-            expect($test)->toEqual([]);
-
-        });
-
-    });
-
     describe('->__invoke()', function () {
 
         it('should instantiate the class with the given arguments', function () {

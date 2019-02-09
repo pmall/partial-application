@@ -36,20 +36,6 @@ describe('BoundCallable', function () {
 
     });
 
-    describe('->required()', function () {
-
-        it('should return the delegate required parameters', function () {
-
-            $this->delegate->required->returns(['parameter1', 'parameter2', 'parameter3']);
-
-            $test = $this->callable->required();
-
-            expect($test)->toEqual(['parameter1', 'parameter2', 'parameter3']);
-
-        });
-
-    });
-
     describe('->__invoke()', function () {
 
         context('when the delegate has no parameter', function () {

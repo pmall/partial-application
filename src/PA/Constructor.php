@@ -32,14 +32,6 @@ final class Constructor implements CallableInterface
     /**
      * @inheritdoc
      */
-    public function required(): array
-    {
-        return [];
-    }
-
-    /**
-     * @inheritdoc
-     */
     public function __invoke(...$xs)
     {
         return new $this->class(...$xs);

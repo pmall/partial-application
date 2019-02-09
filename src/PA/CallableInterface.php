@@ -12,13 +12,6 @@ interface CallableInterface
     public function parameters(): array;
 
     /**
-     * Return the callable required parameter names.
-     *
-     * @return string[]
-     */
-    public function required(): array;
-
-    /**
      * Invoke the callable with the given arguments.
      *
      * @param mixed ...$xs

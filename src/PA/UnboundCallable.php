@@ -45,14 +45,6 @@ final class UnboundCallable implements CallableInterface
     /**
      * @inheritdoc
      */
-    public function required(): array
-    {
-        return $this->parameters();
-    }
-
-    /**
-     * @inheritdoc
-     */
     public function __invoke(...$xs)
     {
         $position = count($this->callable->parameters());

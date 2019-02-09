@@ -54,14 +54,6 @@ final class UnboundCallableWithDefaultValue implements CallableInterface
     /**
      * @inheritdoc
      */
-    public function required(): array
-    {
-        return $this->callable->parameters();
-    }
-
-    /**
-     * @inheritdoc
-     */
     public function __invoke(...$xs)
     {
         $position = count($this->callable->parameters());

@@ -35,20 +35,6 @@ describe('UnboundCallable', function () {
 
     });
 
-    describe('->required()', function () {
-
-        it('should return the delegate parameters with the parameter', function () {
-
-            $this->delegate->parameters->returns(['parameter1', 'parameter2', 'parameter3']);
-
-            $test = $this->callable->required();
-
-            expect($test)->toEqual(['parameter1', 'parameter2', 'parameter3', 'parameter']);
-
-        });
-
-    });
-
     describe('->__invoke()', function () {
 
         context('when the delegate has no parameter', function () {
