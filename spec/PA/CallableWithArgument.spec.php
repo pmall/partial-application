@@ -3,16 +3,16 @@
 use function Eloquent\Phony\Kahlan\mock;
 
 use Quanta\Placeholder;
-use Quanta\PA\BoundCallable;
 use Quanta\PA\CallableInterface;
+use Quanta\PA\CallableWithArgument;
 
-describe('BoundCallable', function () {
+describe('CallableWithArgument', function () {
 
     beforeEach(function () {
 
         $this->delegate = mock(CallableInterface::class);
 
-        $this->callable = new BoundCallable($this->delegate->get(), 'argument');
+        $this->callable = new CallableWithArgument($this->delegate->get(), 'argument');
 
     });
 

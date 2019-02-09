@@ -4,7 +4,7 @@ namespace Quanta\PA;
 
 use Quanta\Placeholder;
 
-final class UnboundCallable implements CallableInterface
+final class CallableWithRequiredParameter implements CallableInterface
 {
     /**
      * The callable to invoke.

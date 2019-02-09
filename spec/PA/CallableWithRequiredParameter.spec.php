@@ -2,16 +2,16 @@
 
 use function Eloquent\Phony\Kahlan\mock;
 
-use Quanta\PA\UnboundCallable;
 use Quanta\PA\CallableInterface;
+use Quanta\PA\CallableWithRequiredParameter;
 
-describe('UnboundCallable', function () {
+describe('CallableWithRequiredParameter', function () {
 
     beforeEach(function () {
 
         $this->delegate = mock(CallableInterface::class);
 
-        $this->callable = new UnboundCallable($this->delegate->get(), 'parameter');
+        $this->callable = new CallableWithRequiredParameter($this->delegate->get(), 'parameter');
 
     });
 

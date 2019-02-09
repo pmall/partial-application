@@ -2,7 +2,7 @@
 
 namespace Quanta\PA;
 
-final class Constructor implements CallableInterface
+final class ConstructorAdapter implements CallableInterface
 {
     /**
      * The name of the class to instantiate.

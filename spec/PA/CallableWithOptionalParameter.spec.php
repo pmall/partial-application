@@ -4,15 +4,15 @@ use function Eloquent\Phony\Kahlan\mock;
 
 use Quanta\Placeholder;
 use Quanta\PA\CallableInterface;
-use Quanta\PA\UnboundCallableWithDefaultValue;
+use Quanta\PA\CallableWithOptionalParameter;
 
-describe('UnboundCallableWithDefaultValue', function () {
+describe('CallableWithOptionalParameter', function () {
 
     beforeEach(function () {
 
         $this->delegate = mock(CallableInterface::class);
 
-        $this->callable = new UnboundCallableWithDefaultValue(...[
+        $this->callable = new CallableWithOptionalParameter(...[
             $this->delegate->get(),
             'parameter',
             'default',

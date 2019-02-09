@@ -5,9 +5,9 @@ use function Eloquent\Phony\Kahlan\mock;
 use Quanta\Placeholder;
 use Quanta\PartialApplication;
 
-use Quanta\PA\Constructor;
 use Quanta\PA\CallableAdapter;
 use Quanta\PA\CallableInterface;
+use Quanta\PA\ConstructorAdapter;
 
 describe('PartialApplication::fromCallable()', function () {
 
@@ -35,7 +35,7 @@ describe('PartialApplication::fromClass()', function () {
 
         expect($test)->toEqual(
             new PartialApplication(
-                new Constructor(SomeClass::class), 'a', 'b', 'c'
+                new ConstructorAdapter(SomeClass::class), 'a', 'b', 'c'
             )
         );
 

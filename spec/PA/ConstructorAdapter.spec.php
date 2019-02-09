@@ -1,15 +1,15 @@
 <?php
 
-use Quanta\PA\Constructor;
 use Quanta\PA\CallableInterface;
+use Quanta\PA\ConstructorAdapter;
 
 require_once __DIR__ . '/../.test/classes.php';
 
-describe('CallableAdapter', function () {
+describe('ConstructorAdapter', function () {
 
     beforeEach(function () {
 
-        $this->callable = new Constructor(Test\TestClass::class);
+        $this->callable = new ConstructorAdapter(Test\TestClass::class);
 
     });
 

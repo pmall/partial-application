@@ -4,7 +4,7 @@ namespace Quanta\PA;
 
 use Quanta\Placeholder;
 
-final class BoundCallable implements CallableInterface
+final class CallableWithArgument implements CallableInterface
 {
     /**
      * The callable to invoke.

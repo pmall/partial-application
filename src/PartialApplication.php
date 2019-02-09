@@ -2,11 +2,11 @@
 
 namespace Quanta;
 
-use Quanta\PA\Constructor;
-use Quanta\PA\BoundCallable;
 use Quanta\PA\CallableAdapter;
-use Quanta\PA\UnboundCallable;
 use Quanta\PA\CallableInterface;
+use Quanta\PA\ConstructorAdapter;
+use Quanta\PA\CallableWithArgument;
+use Quanta\PA\CallableWithRequiredParameter;
 
 final class PartialApplication
 {
@@ -45,7 +45,7 @@ final class PartialApplication
      */
     public static function fromClass(string $class, ...$arguments): PartialApplication
     {
-        return new PartialApplication(new Constructor($class), ...$arguments);
+        return new PartialApplication(new ConstructorAdapter($class), ...$arguments);
     }
 
     /**
@@ -83,7 +83,8 @@ final class PartialApplication
     /**
      * Bind the given callable to the given argument.
      *
-     * Return a UnboundCallable when the argument is 'Quanta\Placeholder'.
+     * Return a CallableWithRequiredParameter when the argument is
+     * 'Quanta\Placeholder'.
      *
      * @param \Quanta\PA\CallableInterface  $callable
      * @param mixed                         $argument
@@ -91,8 +92,8 @@ final class PartialApplication
      */
     private function bound(CallableInterface $callable, $argument): CallableInterface
     {
-        return $argument === Placeholder::class
-            ? new UnboundCallable($callable, 'p')
-            : new BoundCallable($callable, $argument);
+        return $argument !== Placeholder::class
+            ? new CallableWithArgument($callable, $argument)
+            : new CallableWithRequiredParameter($callable, 'p');
     }
 }
