@@ -35,11 +35,9 @@ final class CallableWithRequiredParameter implements CallableInterface
     /**
      * @inheritdoc
      */
-    public function parameters(): array
+    public function parameters(bool $optional = false): ParameterCollection
     {
-        $parameters = $this->callable->parameters();
-
-        return array_merge($parameters, [$this->parameter]);
+        return $this->callable->parameters(true)->with($this->parameter);
     }
 
     /**
@@ -47,17 +45,22 @@ final class CallableWithRequiredParameter implements CallableInterface
      */
     public function __invoke(...$xs)
     {
-        $position = count($this->callable->parameters());
+        $offset = $this->callable->parameters(true)->number();
 
-        $xs = array_pad($xs, $position + 1, Placeholder::class);
+        $xs = array_pad($xs, $offset + 1, Placeholder::class);
 
-        if ($xs[$position] == Placeholder::class) {
-            throw new \ArgumentCountError(
-                $this->missingArgumentErrorMessage(...$xs)
-            );
+        if ($xs[$offset] !== Placeholder::class) {
+            return ($this->callable)(...$xs);
         }
 
-        return ($this->callable)(...$xs);
+        throw new \ArgumentCountError(
+            vsprintf('No argument bound to %s of function %s()', [
+                $this->parameters()->only(...array_keys(
+                    array_filter($xs, [$this, 'isPlaceholder'])
+                )),
+                $this->callable->str(),
+            ])
+        );
     }
 
     /**
@@ -77,42 +80,5 @@ final class CallableWithRequiredParameter implements CallableInterface
     private function isPlaceholder($x): bool
     {
         return $x === Placeholder::class;
-    }
-
-    /**
-     * Prefix the given parameter name with '$'.
-     *
-     * @param string $name
-     * @return string
-     */
-    private function prefixedParameterName(string $name): string
-    {
-        return '$' . $name;
-    }
-
-    /**
-     * Return the message of the exception thrown when an argument is missing.
-     *
-     * @return string
-     */
-    private function missingArgumentErrorMessage(...$xs): string
-    {
-        $missing = array_intersect_key(
-            $this->callable->parameters(),
-            array_filter($xs, [$this, 'isPlaceholder'])
-        );
-
-        if (count($missing) > 0) {
-            return vsprintf('No argument bound to parameters %s and $%s of function %s()', [
-                implode(', ', array_map([$this, 'prefixedParameterName'], $missing)),
-                $this->parameter,
-                $this->callable->str(),
-            ]);
-        }
-
-        return vsprintf('No argument bound to parameter $%s of function %s()', [
-            $this->parameter,
-            $this->callable->str(),
-        ]);
     }
 }

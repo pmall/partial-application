@@ -8,6 +8,7 @@ use Quanta\PartialApplication;
 use Quanta\PA\CallableAdapter;
 use Quanta\PA\CallableInterface;
 use Quanta\PA\ConstructorAdapter;
+use Quanta\PA\ParameterCollection;
 
 describe('PartialApplication::fromCallable()', function () {
 
@@ -62,6 +63,12 @@ describe('PartialApplication', function () {
 
     describe('->__invoke()', function () {
 
+        beforeEach(function () {
+
+            $this->callable->parameters->returns(new ParameterCollection);
+
+        });
+
         context('when less arguments than placeholders are given', function () {
 
             it('should throw an ArgumentCountError', function () {
@@ -84,7 +91,7 @@ describe('PartialApplication', function () {
                     $test = $e->getMessage();
                 }
 
-                expect($test)->toContain('function str');
+                expect($test)->toContain('function str()');
                 expect($test)->toContain('2 passed');
                 expect($test)->toContain('3 expected');
 
@@ -96,9 +103,9 @@ describe('PartialApplication', function () {
 
             it('should invoke the callable with both the bound arguments and the given arguments', function () {
 
-                $xs = ['bound1', 'value1', 'value2', 'bound2', 'value3'];
-
-                $this->callable->__invoke->with(...$xs)->returns('value');
+                $this->callable->__invoke->with(...[
+                    'bound1', 'value1', 'value2', 'bound2', 'value3'
+                ])->returns('value');
 
                 $test = ($this->pa)('value1', 'value2', 'value3');
 
@@ -112,9 +119,9 @@ describe('PartialApplication', function () {
 
             it('should invoke the callable with both the bound arguments and the given arguments', function () {
 
-                $xs = ['bound1', 'value1', 'value2', 'bound2', 'value3', 'value4'];
-
-                $this->callable->__invoke->with(...$xs)->returns('value');
+                $this->callable->__invoke->with(...[
+                    'bound1', 'value1', 'value2', 'bound2', 'value3', 'value4'
+                ])->returns('value');
 
                 $test = ($this->pa)('value1', 'value2', 'value3', 'value4');
 

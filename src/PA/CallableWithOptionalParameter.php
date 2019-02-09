@@ -44,11 +44,11 @@ final class CallableWithOptionalParameter implements CallableInterface
     /**
      * @inheritdoc
      */
-    public function parameters(): array
+    public function parameters(bool $optional = false): ParameterCollection
     {
-        $parameters = $this->callable->parameters();
+        $parameters = $this->callable->parameters($optional);
 
-        return array_merge($parameters, [$this->parameter]);
+        return $optional ? $parameters->with($this->parameter): $parameters;
     }
 
     /**
@@ -56,12 +56,12 @@ final class CallableWithOptionalParameter implements CallableInterface
      */
     public function __invoke(...$xs)
     {
-        $position = count($this->callable->parameters());
+        $offset = $this->callable->parameters(true)->number();
 
-        $xs = array_pad($xs, $position + 1, Placeholder::class);
+        $xs = array_pad($xs, $offset + 1, Placeholder::class);
 
-        if ($xs[$position] == Placeholder::class) {
-            $xs[$position] = $this->default;
+        if ($xs[$offset] == Placeholder::class) {
+            $xs[$offset] = $this->default;
         }
 
         return ($this->callable)(...$xs);

@@ -4,6 +4,7 @@ use function Eloquent\Phony\Kahlan\stub;
 
 use Quanta\PA\CallableAdapter;
 use Quanta\PA\CallableInterface;
+use Quanta\PA\ParameterCollection;
 
 require_once __DIR__ . '/../.test/classes.php';
 
@@ -31,7 +32,7 @@ describe('CallableAdapter', function () {
 
                 $test = $this->callable->parameters();
 
-                expect($test)->toEqual([]);
+                expect($test)->toEqual(new ParameterCollection);
 
             });
 

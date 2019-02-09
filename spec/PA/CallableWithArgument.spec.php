@@ -4,6 +4,7 @@ use function Eloquent\Phony\Kahlan\mock;
 
 use Quanta\Placeholder;
 use Quanta\PA\CallableInterface;
+use Quanta\PA\ParameterCollection;
 use Quanta\PA\CallableWithArgument;
 
 describe('CallableWithArgument', function () {
@@ -24,13 +25,41 @@ describe('CallableWithArgument', function () {
 
     describe('->parameters()', function () {
 
-        it('should return the delegate parameters', function () {
+        beforeEach(function () {
 
-            $this->delegate->parameters->returns(['parameter1', 'parameter2', 'parameter3']);
+            $this->parameters = new ParameterCollection(...[
+                'parameter1',
+                'parameter2',
+                'parameter3',
+            ]);
 
-            $test = $this->callable->parameters();
+        });
 
-            expect($test)->toEqual(['parameter1', 'parameter2', 'parameter3']);
+        context('when optional parameters are not included', function () {
+
+            it('should return the delegate parameters', function () {
+
+                $this->delegate->parameters->with(false)->returns($this->parameters);
+
+                $test = $this->callable->parameters();
+
+                expect($test)->toBe($this->parameters);
+
+            });
+
+        });
+
+        context('when optional parameters are included', function () {
+
+            it('should return the delegate parameters', function () {
+
+                $this->delegate->parameters->with(true)->returns($this->parameters);
+
+                $test = $this->callable->parameters(true);
+
+                expect($test)->toBe($this->parameters);
+
+            });
 
         });
 
@@ -42,7 +71,7 @@ describe('CallableWithArgument', function () {
 
             beforeEach(function () {
 
-                $this->delegate->parameters->returns([]);
+                $this->delegate->parameters->returns(new ParameterCollection);
 
             });
 
@@ -85,7 +114,11 @@ describe('CallableWithArgument', function () {
 
             beforeEach(function () {
 
-                $this->delegate->parameters->returns(['parameter1', 'parameter2', 'parameter3']);
+                $this->delegate->parameters->returns(new ParameterCollection(...[
+                    'parameter1',
+                    'parameter2',
+                    'parameter3',
+                ]));
 
             });
 

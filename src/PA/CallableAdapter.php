@@ -24,9 +24,9 @@ final class CallableAdapter implements CallableInterface
     /**
      * @inheritdoc
      */
-    public function parameters(): array
+    public function parameters(bool $optional = false): ParameterCollection
     {
-        return [];
+        return new ParameterCollection;
     }
 
     /**

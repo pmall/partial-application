@@ -3,6 +3,7 @@
 use function Eloquent\Phony\Kahlan\mock;
 
 use Quanta\PA\CallableInterface;
+use Quanta\PA\ParameterCollection;
 use Quanta\PA\CallableWithRequiredParameter;
 
 describe('CallableWithRequiredParameter', function () {
@@ -23,13 +24,51 @@ describe('CallableWithRequiredParameter', function () {
 
     describe('->parameters()', function () {
 
-        it('should return the delegate parameters with the parameter', function () {
+        beforeEach(function () {
 
-            $this->delegate->parameters->returns(['parameter1', 'parameter2', 'parameter3']);
+            $this->parameters = new ParameterCollection(...[
+                'parameter1',
+                'parameter2',
+                'parameter3',
+            ]);
 
-            $test = $this->callable->parameters();
+        });
 
-            expect($test)->toEqual(['parameter1', 'parameter2', 'parameter3', 'parameter']);
+        context('when optional parameters are not included', function () {
+
+            it('should return the delegate parameters with this parameter', function () {
+
+                $this->delegate->parameters->with(true)->returns($this->parameters);
+
+                $test = $this->callable->parameters();
+
+                expect($test)->toEqual(new ParameterCollection(...[
+                    'parameter1',
+                    'parameter2',
+                    'parameter3',
+                    'parameter',
+                ]));
+
+            });
+
+        });
+
+        context('when optional parameters are included', function () {
+
+            it('should return the delegate parameters with this parameter', function () {
+
+                $this->delegate->parameters->with(true)->returns($this->parameters);
+
+                $test = $this->callable->parameters(true);
+
+                expect($test)->toEqual(new ParameterCollection(...[
+                    'parameter1',
+                    'parameter2',
+                    'parameter3',
+                    'parameter',
+                ]));
+
+            });
 
         });
 
@@ -41,7 +80,7 @@ describe('CallableWithRequiredParameter', function () {
 
             beforeEach(function () {
 
-                $this->delegate->parameters->returns([]);
+                $this->delegate->parameters->returns(new ParameterCollection);
 
             });
 
@@ -96,7 +135,11 @@ describe('CallableWithRequiredParameter', function () {
 
             beforeEach(function () {
 
-                $this->delegate->parameters->returns(['parameter1', 'parameter2', 'parameter3']);
+                $this->delegate->parameters->returns(new ParameterCollection(...[
+                    'parameter1',
+                    'parameter2',
+                    'parameter3',
+                ]));
 
             });
 

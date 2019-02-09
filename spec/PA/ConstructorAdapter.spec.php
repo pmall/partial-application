@@ -2,6 +2,7 @@
 
 use Quanta\PA\CallableInterface;
 use Quanta\PA\ConstructorAdapter;
+use Quanta\PA\ParameterCollection;
 
 require_once __DIR__ . '/../.test/classes.php';
 
@@ -25,7 +26,7 @@ describe('ConstructorAdapter', function () {
 
             $test = $this->callable->parameters();
 
-            expect($test)->toEqual([]);
+            expect($test)->toEqual(new ParameterCollection);
 
         });
 
