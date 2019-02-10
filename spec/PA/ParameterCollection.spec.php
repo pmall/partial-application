@@ -65,42 +65,40 @@ describe('ParameterCollection', function () {
 
         });
 
-        describe('->with()', function () {
+        describe('->head()', function () {
 
-            it('should return a new parameter collection with the given parameters', function () {
+            it('should return a new empty parameter collection', function () {
 
-                $test = $this->parameters->with('p1', 'p2', 'p3');
+                $test = $this->parameters->head(3);
 
                 expect($test)->not->toBe($this->parameters);
-                expect($test)->toEqual(new ParameterCollection('p1', 'p2', 'p3'));
+                expect($test)->toEqual(new ParameterCollection);
 
             });
 
         });
 
-        describe('->str()', function () {
+        describe('->tail()', function () {
 
-            context('when no format is given', function () {
+            it('should return a new empty parameter collection', function () {
 
-                it('should return an empty string', function () {
+                $test = $this->parameters->tail(3);
 
-                    $test = $this->parameters->str();
-
-                    expect($test)->toEqual('');
-
-                });
+                expect($test)->not->toBe($this->parameters);
+                expect($test)->toEqual(new ParameterCollection);
 
             });
 
-            context('when no format is given', function () {
+        });
 
-                it('should return an empty string', function () {
+        describe('->with()', function () {
 
-                    $test = $this->parameters->str('$%s');
+            it('should return a new parameter collection containing the given parameters', function () {
 
-                    expect($test)->toEqual('');
+                $test = $this->parameters->with('p1', 'p2', 'p3');
 
-                });
+                expect($test)->not->toBe($this->parameters);
+                expect($test)->toEqual(new ParameterCollection('p1', 'p2', 'p3'));
 
             });
 
@@ -172,7 +170,7 @@ describe('ParameterCollection', function () {
 
             context('when a given position is 0', function () {
 
-                it('should return a new parameter collection with the parameter', function () {
+                it('should return a new parameter collection containing the parameter', function () {
 
                     $test = $this->parameters->only(0, 2, 4);
 
@@ -185,7 +183,7 @@ describe('ParameterCollection', function () {
 
             context('when no given position is 0', function () {
 
-                it('should return a new parameter collection without the parameter', function () {
+                it('should return a new empty parameter collection', function () {
 
                     $test = $this->parameters->only(1, 2, 4);
 
@@ -198,42 +196,74 @@ describe('ParameterCollection', function () {
 
         });
 
-        describe('->with()', function () {
+        describe('->head()', function () {
 
-            it('should return a new parameter collection with the given parameters', function () {
+            context('when the given length is 0', function () {
 
-                $test = $this->parameters->with('p2', 'p3', 'p4');
+                it('should return a new empty parameter collection', function () {
 
-                expect($test)->not->toBe($this->parameters);
-                expect($test)->toEqual(new ParameterCollection('p1', 'p2', 'p3', 'p4'));
+                    $test = $this->parameters->head(0);
+
+                    expect($test)->not->toBe($this->parameters);
+                    expect($test)->toEqual(new ParameterCollection);
+
+                });
+
+            });
+
+            context('when the given length is at least 1', function () {
+
+                it('should return a new parameter collection containing the parameter', function () {
+
+                    $test = $this->parameters->head(1);
+
+                    expect($test)->not->toBe($this->parameters);
+                    expect($test)->toEqual(new ParameterCollection('p1'));
+
+                });
 
             });
 
         });
 
-        describe('->str()', function () {
+        describe('->tail()', function () {
 
-            context('when no format is given', function () {
+            context('when the given length is 0', function () {
 
-                it('should return a default string representation of the parameter collection', function () {
+                it('should return a new empty parameter collection', function () {
 
-                    $test = $this->parameters->str();
+                    $test = $this->parameters->tail(0);
 
-                    expect($test)->toEqual('parameter $p1');
+                    expect($test)->not->toBe($this->parameters);
+                    expect($test)->toEqual(new ParameterCollection);
 
                 });
 
             });
 
-            context('when no format is given', function () {
+            context('when the given length is at least 1', function () {
 
-                it('should return a string representation of the parameter collection with the formatted parameter names', function () {
+                it('should return a new parameter collection containing the parameter', function () {
 
-                    $test = $this->parameters->str('\'%s\'');
+                    $test = $this->parameters->tail(1);
 
-                    expect($test)->toEqual('parameter \'p1\'');
+                    expect($test)->not->toBe($this->parameters);
+                    expect($test)->toEqual(new ParameterCollection('p1'));
 
                 });
+
+            });
+
+        });
+
+        describe('->with()', function () {
+
+            it('should return a new parameter collection containing the parameter and the given parameters', function () {
+
+                $test = $this->parameters->with('p2', 'p3', 'p4');
+
+                expect($test)->not->toBe($this->parameters);
+                expect($test)->toEqual(new ParameterCollection('p1', 'p2', 'p3', 'p4'));
 
             });
 
@@ -303,7 +333,7 @@ describe('ParameterCollection', function () {
 
         describe('->only()', function () {
 
-            it('should return a new parameter collection with the parameters at the given positions', function () {
+            it('should return a new parameter collection containing the parameters at the given positions', function () {
 
                 $test = $this->parameters->only(0, 2, 4);
 
@@ -314,9 +344,95 @@ describe('ParameterCollection', function () {
 
         });
 
+        describe('->head()', function () {
+
+            context('when the given length is 0', function () {
+
+                it('should return a new empty parameter collection', function () {
+
+                    $test = $this->parameters->head(0);
+
+                    expect($test)->not->toBe($this->parameters);
+                    expect($test)->toEqual(new ParameterCollection);
+
+                });
+
+            });
+
+            context('when the given length is positive', function () {
+
+                it('should return a new parameter collection containing the first n parameters', function () {
+
+                    $test = $this->parameters->head(3);
+
+                    expect($test)->not->toBe($this->parameters);
+                    expect($test)->toEqual(new ParameterCollection('p1', 'p2', 'p3'));
+
+                });
+
+            });
+
+            context('when the given length is negative', function () {
+
+                it('should return a new parameter collection containing all parameters except the last n', function () {
+
+                    $test = $this->parameters->head(-3);
+
+                    expect($test)->not->toBe($this->parameters);
+                    expect($test)->toEqual(new ParameterCollection('p1', 'p2'));
+
+                });
+
+            });
+
+        });
+
+        describe('->tail()', function () {
+
+            context('when the given length is 0', function () {
+
+                it('should return a new empty parameter collection', function () {
+
+                    $test = $this->parameters->tail(0);
+
+                    expect($test)->not->toBe($this->parameters);
+                    expect($test)->toEqual(new ParameterCollection);
+
+                });
+
+            });
+
+            context('when the given length is positive', function () {
+
+                it('should return a new parameter collection containing the last n parameters', function () {
+
+                    $test = $this->parameters->tail(3);
+
+                    expect($test)->not->toBe($this->parameters);
+                    expect($test)->toEqual(new ParameterCollection('p3', 'p4', 'p5'));
+
+                });
+
+            });
+
+            context('when the given length is negative', function () {
+
+                it('should return a new parameter collection containing all parameters except the first n', function () {
+
+                    $test = $this->parameters->tail(-3);
+
+                    expect($test)->not->toBe($this->parameters);
+                    expect($test)->toEqual(new ParameterCollection('p4', 'p5'));
+
+                });
+
+            });
+
+        });
+
         describe('->with()', function () {
 
-            it('should return a new parameter collection with the given parameters', function () {
+            it('should return a new parameter collection containing the given parameters', function () {
 
                 $test = $this->parameters->with('p6', 'p7', 'p8');
 
@@ -324,34 +440,6 @@ describe('ParameterCollection', function () {
                 expect($test)->toEqual(new ParameterCollection(...[
                     'p1', 'p2', 'p3', 'p4', 'p5', 'p6', 'p7', 'p8',
                 ]));
-
-            });
-
-        });
-
-        describe('->str()', function () {
-
-            context('when no format is given', function () {
-
-                it('should return a default string representation of the parameter collection', function () {
-
-                    $test = $this->parameters->str();
-
-                    expect($test)->toEqual('parameters $p1, $p2, $p3, $p4 and $p5');
-
-                });
-
-            });
-
-            context('when no format is given', function () {
-
-                it('should return a string representation of the parameter collection with the formatted parameter names', function () {
-
-                    $test = $this->parameters->str('\'%s\'');
-
-                    expect($test)->toEqual('parameters \'p1\', \'p2\', \'p3\', \'p4\' and \'p5\'');
-
-                });
 
             });
 

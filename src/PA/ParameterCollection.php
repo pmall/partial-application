@@ -46,8 +46,8 @@ final class ParameterCollection
     }
 
     /**
-     * Return a new parameter collection with only the parameters at the given
-     * positions.
+     * Return a new parameter collection containing only the parameters at the
+     * given positions.
      *
      * @param int ...$positions
      * @return \Quanta\PA\ParameterCollection
@@ -60,7 +60,36 @@ final class ParameterCollection
     }
 
     /**
-     * Return a new parameter collection with the given parameters.
+     * Return a new parameter collection containing only the first n parameters.
+     *
+     * @param int $n
+     * @return \Quanta\PA\ParameterCollection
+     */
+    public function head(int $n): ParameterCollection
+    {
+        return new ParameterCollection(
+            ...array_slice($this->parameters, 0, $n)
+        );
+    }
+
+    /**
+     * Return a new parameter collection containing only the last n parameters.
+     *
+     * @param int $n
+     * @return \Quanta\PA\ParameterCollection
+     */
+    public function tail(int $n): ParameterCollection
+    {
+        $xs = $n == 0 ? [-1 * $n, 0] : [-1 * $n];
+
+        return new ParameterCollection(
+            ...array_slice($this->parameters, ...$xs)
+        );
+    }
+
+    /**
+     * Return a new parameter collection containing the parameters and the given
+     * parameters.
      *
      * @param string ...$parameters
      * @return \Quanta\PA\ParameterCollection
@@ -71,38 +100,23 @@ final class ParameterCollection
     }
 
     /**
-     * Return a string representation of the parameter collection using the
-     * given sprintf format.
-     *
-     * @param string $format
-     * @return string
-     */
-    public function str(string $format = '$%s'): string
-    {
-        if (count($this->parameters) == 0) {
-            return '';
-        }
-
-        if (count($this->parameters) == 1) {
-            return vsprintf('parameter %s', $this->names($format));
-        }
-
-        $prev = new ParameterCollection(...array_slice($this->parameters, 0, -1));
-        $last = new ParameterCollection(...array_slice($this->parameters, -1));
-
-        return vsprintf('parameters %s and %s', [
-            implode(', ', $prev->names($format)),
-            current($last->names($format)),
-        ]);
-    }
-
-    /**
      * Return the default string representation of the parameter collection.
      *
      * @return string
      */
     public function __toString()
     {
-        return $this->str('$%s');
+        if (count($this->parameters) == 0) {
+            return '';
+        }
+
+        if (count($this->parameters) == 1) {
+            return vsprintf('parameter %s', $this->names('$%s'));
+        }
+
+        return vsprintf('parameters %s and %s', [
+            implode(', ', $this->head(-1)->names('$%s')),
+            current($this->tail(1)->names('$%s')),
+        ]);
     }
 }
