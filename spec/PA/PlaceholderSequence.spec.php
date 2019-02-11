@@ -1,5 +1,6 @@
 <?php
 
+use Quanta\Placeholder;
 use Quanta\PA\PlaceholderSequence;
 
 describe('PlaceholderSequence', function () {
@@ -52,11 +53,11 @@ describe('PlaceholderSequence', function () {
 
         });
 
-        describe('->only()', function () {
+        describe('->from()', function () {
 
             it('should return a new empty placeholder sequence', function () {
 
-                $test = $this->placeholders->only(0, 2, 4);
+                $test = $this->placeholders->from(0);
 
                 expect($test)->not->toBe($this->placeholders);
                 expect($test)->toEqual(new PlaceholderSequence);
@@ -65,11 +66,17 @@ describe('PlaceholderSequence', function () {
 
         });
 
-        describe('->from()', function () {
+        describe('->unbound()', function () {
 
             it('should return a new empty placeholder sequence', function () {
 
-                $test = $this->placeholders->from(0);
+                $test = $this->placeholders->unbound(...[
+                    'a1',
+                    Placeholder::class,
+                    'a3',
+                    Placeholder::class,
+                    'a5',
+                ]);
 
                 expect($test)->not->toBe($this->placeholders);
                 expect($test)->toEqual(new PlaceholderSequence);
@@ -181,41 +188,11 @@ describe('PlaceholderSequence', function () {
 
         });
 
-        describe('->only()', function () {
-
-            context('when a given position is 0', function () {
-
-                it('should return a new placeholder sequence containing the placeholder', function () {
-
-                    $test = $this->placeholders->only(0, 2, 4);
-
-                    expect($test)->not->toBe($this->placeholders);
-                    expect($test)->toEqual(new PlaceholderSequence('p1'));
-
-                });
-
-            });
-
-            context('when no given position is 0', function () {
-
-                it('should return a new empty placeholder sequence', function () {
-
-                    $test = $this->placeholders->only(1, 2, 4);
-
-                    expect($test)->not->toBe($this->placeholders);
-                    expect($test)->toEqual(new PlaceholderSequence);
-
-                });
-
-            });
-
-        });
-
         describe('->from()', function () {
 
             context('when the position is 0', function () {
 
-                it('should return a new placeholder sequence with the placeholder', function () {
+                it('should return a new placeholder sequence containing the placeholder', function () {
 
                     $test = $this->placeholders->from(0);
 
@@ -234,6 +211,48 @@ describe('PlaceholderSequence', function () {
 
                     expect($test)->not->toBe($this->placeholders);
                     expect($test)->toEqual(new PlaceholderSequence);
+
+                });
+
+            });
+
+        });
+
+        describe('->unbound()', function () {
+
+            context('when the first given argument is bound', function () {
+
+                it('should return a new empty placeholder sequence', function () {
+
+                    $test = $this->placeholders->unbound(...[
+                        'a1',
+                        Placeholder::class,
+                        'a3',
+                        Placeholder::class,
+                        'a5',
+                    ]);
+
+                    expect($test)->not->toBe($this->placeholders);
+                    expect($test)->toEqual(new PlaceholderSequence);
+
+                });
+
+            });
+
+            context('when the first given argument is not bound', function () {
+
+                it('should return a new placeholder sequence containing the placeholder', function () {
+
+                    $test = $this->placeholders->unbound(...[
+                        Placeholder::class,
+                        Placeholder::class,
+                        'a3',
+                        Placeholder::class,
+                        'a5',
+                    ]);
+
+                    expect($test)->not->toBe($this->placeholders);
+                    expect($test)->toEqual(new PlaceholderSequence('p1'));
 
                 });
 
@@ -344,27 +363,33 @@ describe('PlaceholderSequence', function () {
 
         });
 
-        describe('->only()', function () {
-
-            it('should return a new placeholder sequence containing the placeholders at the given positions', function () {
-
-                $test = $this->placeholders->only(0, 2, 4);
-
-                expect($test)->not->toBe($this->placeholders);
-                expect($test)->toEqual(new PlaceholderSequence('p1', 'p3', 'p5'));
-
-            });
-
-        });
-
         describe('->from()', function () {
 
-            it('should return a new placeholder sequence containing only the placeholders from the given position', function () {
+            it('should return a new placeholder sequence containing only the placeholders starting from the given position', function () {
 
                 $test = $this->placeholders->from(2);
 
                 expect($test)->not->toBe($this->placeholders);
                 expect($test)->toEqual(new PlaceholderSequence('p3', 'p4', 'p5'));
+
+            });
+
+        });
+
+        describe('->unbound()', function () {
+
+            it('should return a new placeholder sequence containing only the placeholders at the same position as the given unbound arguments', function () {
+
+                $test = $this->placeholders->unbound(...[
+                    'a1',
+                    Placeholder::class,
+                    'a3',
+                    Placeholder::class,
+                    'a5',
+                ]);
+
+                expect($test)->not->toBe($this->placeholders);
+                expect($test)->toEqual(new PlaceholderSequence('p2', 'p4'));
 
             });
 

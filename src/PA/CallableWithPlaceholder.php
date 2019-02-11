@@ -79,9 +79,7 @@ final class CallableWithPlaceholder implements CallableInterface
 
         throw new \ArgumentCountError(
             vsprintf('No argument given for placeholders [%s] of partial application of function %s()', [
-                $this->placeholders()->only(...array_keys(
-                    array_filter($xs, [$this, 'isPlaceholder'])
-                )),
+                $this->placeholders()->unbound(...$xs),
                 $this->callable->str(),
             ])
         );
@@ -93,16 +91,5 @@ final class CallableWithPlaceholder implements CallableInterface
     public function str(): string
     {
         return $this->callable->str();
-    }
-
-    /**
-     * Return whether the given value is a placeholder.
-     *
-     * @param mixed $x
-     * @return bool
-     */
-    private function isPlaceholder($x): bool
-    {
-        return $x === Placeholder::class;
     }
 }

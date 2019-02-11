@@ -2,6 +2,8 @@
 
 namespace Quanta\PA;
 
+use Quanta\Placeholder;
+
 final class PlaceholderSequence
 {
     /**
@@ -46,33 +48,33 @@ final class PlaceholderSequence
     }
 
     /**
-     * Return a new placeholder sequence containing only the placeholders at the
-     * given positions.
-     *
-     * @param int ...$positions
-     * @return \Quanta\PA\PlaceholderSequence
-     */
-    public function only(int ...$positions): PlaceholderSequence
-    {
-        return new PlaceholderSequence(...array_values(
-            array_intersect_key($this->placeholders, array_flip($positions))
-        ));
-    }
-
-    /**
-     * Return a new placeholder sequence containing only the parameters from the
-     * given position.
+     * Return a new placeholder sequence containing only the placeholders
+     * starting from the given position.
      *
      * @param int $position
      * @return \Quanta\PA\PlaceholderSequence
      */
     public function from(int $position): PlaceholderSequence
     {
-        $nb = count($this->placeholders);
+        return new PlaceholderSequence(
+            ...array_slice($this->placeholders, $position)
+        );
+    }
 
-        return $position < $nb
-            ? $this->only(...range($position, $nb - 1))
-            : new PlaceholderSequence;
+    /**
+     * Return a new placeholder sequence containing only the placeholders at the
+     * same position as the given unbound arguments.
+     *
+     * @param mixed ...$xs
+     * @return \Quanta\PA\PlaceholderSequence
+     */
+    public function unbound(...$xs): PlaceholderSequence
+    {
+        return new PlaceholderSequence(...array_values(
+            array_intersect_key($this->placeholders, ...[
+                array_filter($xs, [$this, 'isPlaceholder'])
+            ])
+        ));
     }
 
     /**
@@ -108,5 +110,16 @@ final class PlaceholderSequence
     public function __toString()
     {
         return $this->str('\'%s\'', ', ');
+    }
+
+    /**
+     * Return whether the given value is a placeholder.
+     *
+     * @param mixed $x
+     * @return bool
+     */
+    private function isPlaceholder($x): bool
+    {
+        return $x === Placeholder::class;
     }
 }
