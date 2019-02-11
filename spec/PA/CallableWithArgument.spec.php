@@ -13,7 +13,10 @@ describe('CallableWithArgument', function () {
 
         $this->delegate = mock(CallableInterface::class);
 
-        $this->callable = new CallableWithArgument($this->delegate->get(), 'argument');
+        $this->callable = new CallableWithArgument(
+            $this->delegate->get(),
+            'argument'
+        );
 
     });
 

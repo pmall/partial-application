@@ -6,7 +6,7 @@ use Quanta\PA\CallableAdapter;
 use Quanta\PA\CallableInterface;
 use Quanta\PA\ConstructorAdapter;
 use Quanta\PA\CallableWithArgument;
-use Quanta\PA\CallableWithRequiredParameter;
+use Quanta\PA\CallableWithPlaceholder;
 
 final class PartialApplication
 {
@@ -83,8 +83,7 @@ final class PartialApplication
     /**
      * Bind the given callable to the given argument.
      *
-     * Return a CallableWithRequiredParameter when the argument is
-     * 'Quanta\Placeholder'.
+     * Return a CallableWithPlaceholder when the argument is Placeholder::class.
      *
      * @param \Quanta\PA\CallableInterface  $callable
      * @param mixed                         $argument
@@ -94,6 +93,6 @@ final class PartialApplication
     {
         return $argument !== Placeholder::class
             ? new CallableWithArgument($callable, $argument)
-            : new CallableWithRequiredParameter($callable, 'p');
+            : new CallableWithPlaceholder($callable, 'p');
     }
 }

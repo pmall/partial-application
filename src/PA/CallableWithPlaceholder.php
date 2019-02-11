@@ -4,7 +4,7 @@ namespace Quanta\PA;
 
 use Quanta\Placeholder;
 
-final class CallableWithRequiredParameter implements CallableInterface
+final class CallableWithPlaceholder implements CallableInterface
 {
     /**
      * The callable to invoke.
@@ -14,22 +14,34 @@ final class CallableWithRequiredParameter implements CallableInterface
     private $callable;
 
     /**
-     * The callable first placeholder name.
+     * The placeholder name.
      *
      * @var string
      */
     private $placeholder;
 
     /**
+     * The default argument for the placeholder.
+     *
+     * @var mixed
+     */
+    private $default;
+
+    /**
      * Constructor.
      *
      * @param \Quanta\PA\CallableInterface  $callable
      * @param string                        $placeholder
+     * @param mixed                         $default
      */
-    public function __construct(CallableInterface $callable, string $placeholder)
-    {
+    public function __construct(
+        CallableInterface $callable,
+        string $placeholder,
+        $default = Placeholder::class
+    ) {
         $this->callable = $callable;
         $this->placeholder = $placeholder;
+        $this->default = $default;
     }
 
     /**
@@ -37,7 +49,15 @@ final class CallableWithRequiredParameter implements CallableInterface
      */
     public function placeholders(bool $optional = false): PlaceholderSequence
     {
-        return $this->callable->placeholders(true)->with($this->placeholder);
+        if ($this->default === Placeholder::class) {
+            return $this->callable->placeholders(true)->with($this->placeholder);
+        }
+
+        $placeholders = $this->callable->placeholders($optional);
+
+        return $optional
+            ? $placeholders->with($this->placeholder)
+            : $placeholders;
     }
 
     /**
@@ -48,6 +68,10 @@ final class CallableWithRequiredParameter implements CallableInterface
         $offset = $this->callable->placeholders(true)->number();
 
         $xs = array_pad($xs, $offset + 1, Placeholder::class);
+
+        if ($xs[$offset] === Placeholder::class) {
+            $xs[$offset] = $this->default;
+        }
 
         if ($xs[$offset] !== Placeholder::class) {
             return ($this->callable)(...$xs);
