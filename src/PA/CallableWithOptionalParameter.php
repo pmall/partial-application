@@ -14,14 +14,14 @@ final class CallableWithOptionalParameter implements CallableInterface
     private $callable;
 
     /**
-     * The callable first parameter name.
+     * The callable first placeholder.
      *
      * @var string
      */
-    private $parameter;
+    private $placeholder;
 
     /**
-     * The callable first parameter default value.
+     * The callable first placeholder default value.
      *
      * @var mixed
      */
@@ -31,24 +31,26 @@ final class CallableWithOptionalParameter implements CallableInterface
      * Constructor.
      *
      * @param \Quanta\PA\CallableInterface  $callable
-     * @param string                        $parameter
+     * @param string                        $placeholder
      * @param mixed                         $default
      */
-    public function __construct(CallableInterface $callable, string $parameter, $default)
+    public function __construct(CallableInterface $callable, string $placeholder, $default)
     {
         $this->callable = $callable;
-        $this->parameter = $parameter;
+        $this->placeholder = $placeholder;
         $this->default = $default;
     }
 
     /**
      * @inheritdoc
      */
-    public function parameters(bool $optional = false): ParameterCollection
+    public function placeholders(bool $optional = false): PlaceholderSequence
     {
-        $parameters = $this->callable->parameters($optional);
+        $placeholders = $this->callable->placeholders($optional);
 
-        return $optional ? $parameters->with($this->parameter): $parameters;
+        return $optional
+            ? $placeholders->with($this->placeholder)
+            : $placeholders;
     }
 
     /**
@@ -56,7 +58,7 @@ final class CallableWithOptionalParameter implements CallableInterface
      */
     public function __invoke(...$xs)
     {
-        $offset = $this->callable->parameters(true)->number();
+        $offset = $this->callable->placeholders(true)->number();
 
         $xs = array_pad($xs, $offset + 1, Placeholder::class);
 

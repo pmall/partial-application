@@ -67,7 +67,7 @@ final class PartialApplication
     {
         $bound = array_reduce($this->arguments, [$this, 'bound'], $this->callable);
 
-        if (count($xs) >= $bound->parameters()->number()) {
+        if (count($xs) >= $bound->placeholders()->number()) {
             return $bound(...$xs);
         }
 
@@ -75,7 +75,7 @@ final class PartialApplication
             vsprintf('Too few arguments to partial application of function %s() %s passed and exactly %s expected', [
                 $bound->str(),
                 count($xs),
-                $bound->parameters()->number(),
+                $bound->placeholders()->number(),
             ])
         );
     }

@@ -14,30 +14,30 @@ final class CallableWithRequiredParameter implements CallableInterface
     private $callable;
 
     /**
-     * The callable first parameter name.
+     * The callable first placeholder name.
      *
      * @var string
      */
-    private $parameter;
+    private $placeholder;
 
     /**
      * Constructor.
      *
      * @param \Quanta\PA\CallableInterface  $callable
-     * @param string                        $parameter
+     * @param string                        $placeholder
      */
-    public function __construct(CallableInterface $callable, string $parameter)
+    public function __construct(CallableInterface $callable, string $placeholder)
     {
         $this->callable = $callable;
-        $this->parameter = $parameter;
+        $this->placeholder = $placeholder;
     }
 
     /**
      * @inheritdoc
      */
-    public function parameters(bool $optional = false): ParameterCollection
+    public function placeholders(bool $optional = false): PlaceholderSequence
     {
-        return $this->callable->parameters(true)->with($this->parameter);
+        return $this->callable->placeholders(true)->with($this->placeholder);
     }
 
     /**
@@ -45,7 +45,7 @@ final class CallableWithRequiredParameter implements CallableInterface
      */
     public function __invoke(...$xs)
     {
-        $offset = $this->callable->parameters(true)->number();
+        $offset = $this->callable->placeholders(true)->number();
 
         $xs = array_pad($xs, $offset + 1, Placeholder::class);
 
@@ -54,8 +54,8 @@ final class CallableWithRequiredParameter implements CallableInterface
         }
 
         throw new \ArgumentCountError(
-            vsprintf('No argument bound to %s of function %s()', [
-                $this->parameters()->only(...array_keys(
+            vsprintf('No argument given for placeholders [%s] of partial application of function %s()', [
+                $this->placeholders()->only(...array_keys(
                     array_filter($xs, [$this, 'isPlaceholder'])
                 )),
                 $this->callable->str(),

@@ -3,7 +3,7 @@
 use function Eloquent\Phony\Kahlan\mock;
 
 use Quanta\PA\CallableInterface;
-use Quanta\PA\ParameterCollection;
+use Quanta\PA\PlaceholderSequence;
 use Quanta\PA\CallableWithRequiredParameter;
 
 describe('CallableWithRequiredParameter', function () {
@@ -12,7 +12,7 @@ describe('CallableWithRequiredParameter', function () {
 
         $this->delegate = mock(CallableInterface::class);
 
-        $this->callable = new CallableWithRequiredParameter($this->delegate->get(), 'parameter');
+        $this->callable = new CallableWithRequiredParameter($this->delegate->get(), 'placeholder');
 
     });
 
@@ -22,50 +22,50 @@ describe('CallableWithRequiredParameter', function () {
 
     });
 
-    describe('->parameters()', function () {
+    describe('->placeholders()', function () {
 
         beforeEach(function () {
 
-            $this->parameters = new ParameterCollection(...[
-                'parameter1',
-                'parameter2',
-                'parameter3',
+            $this->placeholders = new PlaceholderSequence(...[
+                'placeholder1',
+                'placeholder2',
+                'placeholder3',
             ]);
 
         });
 
-        context('when optional parameters are not included', function () {
+        context('when optional placeholders are not included', function () {
 
-            it('should return the delegate parameters with this parameter', function () {
+            it('should return the delegate placeholders with this placeholder', function () {
 
-                $this->delegate->parameters->with(true)->returns($this->parameters);
+                $this->delegate->placeholders->with(true)->returns($this->placeholders);
 
-                $test = $this->callable->parameters();
+                $test = $this->callable->placeholders();
 
-                expect($test)->toEqual(new ParameterCollection(...[
-                    'parameter1',
-                    'parameter2',
-                    'parameter3',
-                    'parameter',
+                expect($test)->toEqual(new PlaceholderSequence(...[
+                    'placeholder1',
+                    'placeholder2',
+                    'placeholder3',
+                    'placeholder',
                 ]));
 
             });
 
         });
 
-        context('when optional parameters are included', function () {
+        context('when optional placeholders are included', function () {
 
-            it('should return the delegate parameters with this parameter', function () {
+            it('should return the delegate placeholders with this placeholder', function () {
 
-                $this->delegate->parameters->with(true)->returns($this->parameters);
+                $this->delegate->placeholders->with(true)->returns($this->placeholders);
 
-                $test = $this->callable->parameters(true);
+                $test = $this->callable->placeholders(true);
 
-                expect($test)->toEqual(new ParameterCollection(...[
-                    'parameter1',
-                    'parameter2',
-                    'parameter3',
-                    'parameter',
+                expect($test)->toEqual(new PlaceholderSequence(...[
+                    'placeholder1',
+                    'placeholder2',
+                    'placeholder3',
+                    'placeholder',
                 ]));
 
             });
@@ -76,11 +76,11 @@ describe('CallableWithRequiredParameter', function () {
 
     describe('->__invoke()', function () {
 
-        context('when the delegate has no parameter', function () {
+        context('when the delegate has no placeholder', function () {
 
             beforeEach(function () {
 
-                $this->delegate->parameters->returns(new ParameterCollection);
+                $this->delegate->placeholders->returns(new PlaceholderSequence);
 
             });
 
@@ -92,7 +92,7 @@ describe('CallableWithRequiredParameter', function () {
 
                 });
 
-                it('should display the delegate string representation and the parameter name', function () {
+                it('should display the delegate string representation and the placeholder name', function () {
 
                     $this->delegate->str->returns('str');
 
@@ -105,7 +105,7 @@ describe('CallableWithRequiredParameter', function () {
                     }
 
                     expect($test)->toContain('function str()');
-                    expect($test)->toContain('parameter $parameter ');
+                    expect($test)->toContain('[\'placeholder\']');
 
                 });
 
@@ -131,19 +131,19 @@ describe('CallableWithRequiredParameter', function () {
 
         });
 
-        context('when the delegate has at least one parameter', function () {
+        context('when the delegate has at least one placeholder', function () {
 
             beforeEach(function () {
 
-                $this->delegate->parameters->returns(new ParameterCollection(...[
-                    'parameter1',
-                    'parameter2',
-                    'parameter3',
+                $this->delegate->placeholders->returns(new PlaceholderSequence(...[
+                    'placeholder1',
+                    'placeholder2',
+                    'placeholder3',
                 ]));
 
             });
 
-            context('when less argument than the delegate parameters are given', function () {
+            context('when less argument than the delegate placeholders are given', function () {
 
                 it('should throw an ArgumentCountError', function () {
 
@@ -153,7 +153,7 @@ describe('CallableWithRequiredParameter', function () {
 
                 });
 
-                it('should display the delegate string representation and format one unbound parameter', function () {
+                it('should display the delegate string representation and format one unbound placeholder', function () {
 
                     $this->delegate->str->returns('str');
 
@@ -166,11 +166,11 @@ describe('CallableWithRequiredParameter', function () {
                     }
 
                     expect($test)->toContain('function str()');
-                    expect($test)->toContain('parameters $parameter3 and $parameter ');
+                    expect($test)->toContain('[\'placeholder3\', \'placeholder\']');
 
                 });
 
-                it('should display the delegate string representation and format multiple unbound parameters', function () {
+                it('should display the delegate string representation and format multiple unbound placeholders', function () {
 
                     $this->delegate->str->returns('str');
 
@@ -183,13 +183,13 @@ describe('CallableWithRequiredParameter', function () {
                     }
 
                     expect($test)->toContain('function str()');
-                    expect($test)->toContain('parameters $parameter2, $parameter3 and $parameter ');
+                    expect($test)->toContain('[\'placeholder2\', \'placeholder3\', \'placeholder\']');
 
                 });
 
             });
 
-            context('when as many arguments as the delegate parameters are given', function () {
+            context('when as many arguments as the delegate placeholders are given', function () {
 
                 it('should throw an ArgumentCountError', function () {
 
@@ -199,7 +199,7 @@ describe('CallableWithRequiredParameter', function () {
 
                 });
 
-                it('should display the delegate string representation and the parameter name', function () {
+                it('should display the delegate string representation and the placeholder name', function () {
 
                     $this->delegate->str->returns('str');
 
@@ -212,13 +212,13 @@ describe('CallableWithRequiredParameter', function () {
                     }
 
                     expect($test)->toContain('function str()');
-                    expect($test)->toContain('parameter $parameter ');
+                    expect($test)->toContain('[\'placeholder\']');
 
                 });
 
             });
 
-            context('when more arguments than the delegate parameters are given', function () {
+            context('when more arguments than the delegate placeholders are given', function () {
 
                 it('should invoke the delegate with the given arguments', function () {
 

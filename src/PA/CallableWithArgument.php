@@ -35,9 +35,9 @@ final class CallableWithArgument implements CallableInterface
     /**
      * @inheritdoc
      */
-    public function parameters(bool $optional = false): ParameterCollection
+    public function placeholders(bool $optional = false): PlaceholderSequence
     {
-        return $this->callable->parameters($optional);
+        return $this->callable->placeholders($optional);
     }
 
     /**
@@ -45,7 +45,7 @@ final class CallableWithArgument implements CallableInterface
      */
     public function __invoke(...$xs)
     {
-        $position = $this->callable->parameters(true)->number();
+        $position = $this->callable->placeholders(true)->number();
 
         $xs = array_pad($xs, $position, Placeholder::class);
 

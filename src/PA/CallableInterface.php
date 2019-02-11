@@ -5,14 +5,12 @@ namespace Quanta\PA;
 interface CallableInterface
 {
     /**
-     * Return the callable parameters.
+     * Return the callable placeholder sequence.
      *
-     * When $optional is set to true the optional parameters must be included.
-     *
-     * @param bool $optional
-     * @return \Quanta\PA\ParameterCollection
+     * @param bool $optional Whether the optional placeholders should be included
+     * @return \Quanta\PA\PlaceholderSequence
      */
-    public function parameters(bool $optional = false): ParameterCollection;
+    public function placeholders(bool $optional = false): PlaceholderSequence;
 
     /**
      * Invoke the callable with the given arguments.

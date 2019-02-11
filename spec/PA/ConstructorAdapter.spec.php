@@ -2,7 +2,7 @@
 
 use Quanta\PA\CallableInterface;
 use Quanta\PA\ConstructorAdapter;
-use Quanta\PA\ParameterCollection;
+use Quanta\PA\PlaceholderSequence;
 
 require_once __DIR__ . '/../.test/classes.php';
 
@@ -20,13 +20,13 @@ describe('ConstructorAdapter', function () {
 
     });
 
-    describe('->parameters()', function () {
+    describe('->placeholders()', function () {
 
-        it('should return an empty array', function () {
+        it('should return an empty placeholder sequence', function () {
 
-            $test = $this->callable->parameters();
+            $test = $this->callable->placeholders();
 
-            expect($test)->toEqual(new ParameterCollection);
+            expect($test)->toEqual(new PlaceholderSequence);
 
         });
 

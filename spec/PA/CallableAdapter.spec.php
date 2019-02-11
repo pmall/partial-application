@@ -4,7 +4,7 @@ use function Eloquent\Phony\Kahlan\stub;
 
 use Quanta\PA\CallableAdapter;
 use Quanta\PA\CallableInterface;
-use Quanta\PA\ParameterCollection;
+use Quanta\PA\PlaceholderSequence;
 
 require_once __DIR__ . '/../.test/classes.php';
 
@@ -26,13 +26,13 @@ describe('CallableAdapter', function () {
 
         });
 
-        describe('->parameters()', function () {
+        describe('->placeholders()', function () {
 
-            it('should return an empty array', function () {
+            it('should return an empty placeholser sequence', function () {
 
-                $test = $this->callable->parameters();
+                $test = $this->callable->placeholders();
 
-                expect($test)->toEqual(new ParameterCollection);
+                expect($test)->toEqual(new PlaceholderSequence);
 
             });
 

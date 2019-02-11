@@ -8,7 +8,7 @@ use Quanta\PartialApplication;
 use Quanta\PA\CallableAdapter;
 use Quanta\PA\CallableInterface;
 use Quanta\PA\ConstructorAdapter;
-use Quanta\PA\ParameterCollection;
+use Quanta\PA\PlaceholderSequence;
 
 describe('PartialApplication::fromCallable()', function () {
 
@@ -65,7 +65,7 @@ describe('PartialApplication', function () {
 
         beforeEach(function () {
 
-            $this->callable->parameters->returns(new ParameterCollection);
+            $this->callable->placeholders->returns(new PlaceholderSequence);
 
         });
 

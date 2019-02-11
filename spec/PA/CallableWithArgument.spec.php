@@ -4,7 +4,7 @@ use function Eloquent\Phony\Kahlan\mock;
 
 use Quanta\Placeholder;
 use Quanta\PA\CallableInterface;
-use Quanta\PA\ParameterCollection;
+use Quanta\PA\PlaceholderSequence;
 use Quanta\PA\CallableWithArgument;
 
 describe('CallableWithArgument', function () {
@@ -23,41 +23,41 @@ describe('CallableWithArgument', function () {
 
     });
 
-    describe('->parameters()', function () {
+    describe('->placeholders()', function () {
 
         beforeEach(function () {
 
-            $this->parameters = new ParameterCollection(...[
-                'parameter1',
-                'parameter2',
-                'parameter3',
+            $this->placeholders = new PlaceholderSequence(...[
+                'placeholder1',
+                'placeholder2',
+                'placeholder3',
             ]);
 
         });
 
-        context('when optional parameters are not included', function () {
+        context('when optional placeholders are not included', function () {
 
-            it('should return the delegate parameters', function () {
+            it('should return the delegate placeholders', function () {
 
-                $this->delegate->parameters->with(false)->returns($this->parameters);
+                $this->delegate->placeholders->with(false)->returns($this->placeholders);
 
-                $test = $this->callable->parameters();
+                $test = $this->callable->placeholders();
 
-                expect($test)->toBe($this->parameters);
+                expect($test)->toBe($this->placeholders);
 
             });
 
         });
 
-        context('when optional parameters are included', function () {
+        context('when optional placeholders are included', function () {
 
-            it('should return the delegate parameters', function () {
+            it('should return the delegate placeholders', function () {
 
-                $this->delegate->parameters->with(true)->returns($this->parameters);
+                $this->delegate->placeholders->with(true)->returns($this->placeholders);
 
-                $test = $this->callable->parameters(true);
+                $test = $this->callable->placeholders(true);
 
-                expect($test)->toBe($this->parameters);
+                expect($test)->toBe($this->placeholders);
 
             });
 
@@ -67,11 +67,11 @@ describe('CallableWithArgument', function () {
 
     describe('->__invoke()', function () {
 
-        context('when the delegate has no parameter', function () {
+        context('when the delegate has no placeholder', function () {
 
             beforeEach(function () {
 
-                $this->delegate->parameters->returns(new ParameterCollection);
+                $this->delegate->placeholders->returns(new PlaceholderSequence);
 
             });
 
@@ -110,19 +110,19 @@ describe('CallableWithArgument', function () {
 
         });
 
-        context('when the delegate has at least one parameter', function () {
+        context('when the delegate has at least one placeholder', function () {
 
             beforeEach(function () {
 
-                $this->delegate->parameters->returns(new ParameterCollection(...[
-                    'parameter1',
-                    'parameter2',
-                    'parameter3',
+                $this->delegate->placeholders->returns(new PlaceholderSequence(...[
+                    'placeholder1',
+                    'placeholder2',
+                    'placeholder3',
                 ]));
 
             });
 
-            context('when less argument than the delegate parameters are given', function () {
+            context('when less argument than the delegate placeholders are given', function () {
 
                 it('should invoke the delegate with the given arguments, placeholders and the argument', function () {
 
@@ -141,7 +141,7 @@ describe('CallableWithArgument', function () {
 
             });
 
-            context('when as many arguments as the delegate parameters are given', function () {
+            context('when as many arguments as the delegate placeholders are given', function () {
 
                 it('should invoke the delegate with the given arguments and the argument', function () {
 
@@ -160,7 +160,7 @@ describe('CallableWithArgument', function () {
 
             });
 
-            context('when more arguments than the delegate parameters are given', function () {
+            context('when more arguments than the delegate placeholders are given', function () {
 
                 it('should invoke the delegate with the given arguments, the argument and the extra arguments', function () {
 

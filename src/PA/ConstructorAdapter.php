@@ -24,9 +24,9 @@ final class ConstructorAdapter implements CallableInterface
     /**
      * @inheritdoc
      */
-    public function parameters(bool $optional = false): ParameterCollection
+    public function placeholders(bool $optional = false): PlaceholderSequence
     {
-        return new ParameterCollection;
+        return new PlaceholderSequence;
     }
 
     /**
