@@ -6,10 +6,10 @@
         "partial-application"
     ],
     "license": "MIT",
-    "homepage": "https://github.com/quanta/partial-application",
+    "homepage": "https://github.com/quantaphp/partial-application",
     "support": {
-        "issues": "https://github.com/quanta/partial-application/issues",
-        "source": "https://github.com/quanta/partial-application"
+        "issues": "https://github.com/quantaphp/partial-application/issues",
+        "source": "https://github.com/quantaphp/partial-application"
     },
     "authors": [
         {
